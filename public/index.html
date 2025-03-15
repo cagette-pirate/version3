@@ -3,48 +3,7 @@
 <head>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MMLSJFZTMN"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-MMLSJFZTMN');
-  </script>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <script>
-    // Configuration Firebase
-    const firebaseConfig = {
-  apiKey: "FIREBASE_API_KEY_PLACEHOLDER",
-  authDomain: "FIREBASE_AUTH_DOMAIN_PLACEHOLDER",
-  databaseURL: "FIREBASE_DATABASE_URL_PLACEHOLDER",
-  projectId: "FIREBASE_PROJECT_ID_PLACEHOLDER",
-  storageBucket: "FIREBASE_STORAGE_BUCKET_PLACEHOLDER",
-  messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID_PLACEHOLDER",
-  appId: "FIREBASE_APP_ID_PLACEHOLDER",
-  measurementId: "FIREBASE_MEASUREMENT_ID_PLACEHOLDER"
-};
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-
-    // Authentification anonyme
-    firebase.auth().signInAnonymously().catch(function(error) {
-      console.error('Anonymous sign-in failed:', error);
-    });
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        console.log('Signed in anonymously as:', user.uid);
-        initApp();
-      } else {
-        console.log('User signed out');
-      }
-    });
-  </script>
+<script src="firebase-init.js"></script>
   <style>
     :root {
       /* Palette de couleurs */
