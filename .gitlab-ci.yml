@@ -1,27 +1,23 @@
-image: busybox
+image: alpine:latest
 
 pages:
   stage: deploy
-  script:
-    # Créer un fichier de configuration Firebase
+  script: 
     - echo "// Configuration Firebase" > public/firebase-config.js
-    - echo "const firebaseConfig = {" >> public/firebase-config.js
-    - echo "  apiKey: \"$FIREBASE_API_KEY\"," >> public/firebase-config.js
-    - echo "  authDomain: \"$FIREBASE_AUTH_DOMAIN\"," >> public/firebase-config.js
-    - echo "  databaseURL: \"$FIREBASE_DATABASE_URL\"," >> public/firebase-config.js
-    - echo "  projectId: \"$FIREBASE_PROJECT_ID\"," >> public/firebase-config.js
-    - echo "  storageBucket: \"$FIREBASE_STORAGE_BUCKET\"," >> public/firebase-config.js
-    - echo "  messagingSenderId: \"$FIREBASE_MESSAGING_SENDER_ID\"," >> public/firebase-config.js
-    - echo "  appId: \"$FIREBASE_APP_ID\"," >> public/firebase-config.js
-    - echo "  measurementId: \"$FIREBASE_MEASUREMENT_ID\"" >> public/firebase-config.js
+    - echo "const firebaseConfig = {" >> public/firebase-config.js 
+    - echo "  apiKey: \"${FIREBASE_API_KEY}\"," >> public/firebase-config.js
+    - echo "  authDomain: \"${FIREBASE_AUTH_DOMAIN}\"," >> public/firebase-config.js
+    - echo "  databaseURL: \"${FIREBASE_DATABASE_URL}\"," >> public/firebase-config.js
+    - echo "  projectId: \"${FIREBASE_PROJECT_ID}\"," >> public/firebase-config.js
+    - echo "  storageBucket: \"${FIREBASE_STORAGE_BUCKET}\"," >> public/firebase-config.js
+    - echo "  messagingSenderId: \"${FIREBASE_MESSAGING_SENDER_ID}\"," >> public/firebase-config.js
+    - echo "  appId: \"${FIREBASE_APP_ID}\"," >> public/firebase-config.js
+    - echo "  measurementId: \"${FIREBASE_MEASUREMENT_ID}\"" >> public/firebase-config.js
     - echo "};" >> public/firebase-config.js
-    
-    # Modifier le HTML pour charger le fichier de configuration externe
-    - 'sed -i "s|// Configuration Firebase|// Configuration Firebase chargée depuis un fichier externe|g" public/index.html'
-    - 'sed -i "/const firebaseConfig = {/,/};/c\\<script src=\"firebase-config.js\"></script>" public/index.html'
+    - sed -i 's|const firebaseConfig = {|// Load Firebase config\n</script>\n<script src="firebase-config.js"></script>\n<script>\n// Initialize Firebase|' public/index.html
+    - sed -i '/apiKey:/,/};/d' public/index.html
   artifacts:
     paths:
       - public
-    expire_in: 1 day
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
