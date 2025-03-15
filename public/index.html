@@ -1,23 +1,1968 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="generator" content="GitLab Pages">
-    <title>Plain HTML site using GitLab Pages</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <div class="navbar">
-      <a href="https://pages.gitlab.io/plain-html/">Plain HTML Example</a>
-      <a href="https://gitlab.com/pages/plain-html/">Repository</a>
-      <a href="https://gitlab.com/pages/">Other Examples</a>
+<html lang="fr">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MMLSJFZTMN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MMLSJFZTMN');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script>
+    // Configuration Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8L0rRQqlBMTTMlrvWYmu8xWbn1szMl0Y",
+      authDomain: "cagette-pas-officielle.firebaseapp.com",
+      databaseURL: "https://cagette-pas-officielle-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "cagette-pas-officielle",
+      storageBucket: "cagette-pas-officielle.appspot.com",
+      messagingSenderId: "57232007409",
+      appId: "1:57232007409:web:d6ae6f6ebfd91634a90950",
+      measurementId: "G-MMLSJFZTMN"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Authentification anonyme
+    firebase.auth().signInAnonymously().catch(function(error) {
+      console.error('Anonymous sign-in failed:', error);
+    });
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log('Signed in anonymously as:', user.uid);
+        initApp();
+      } else {
+        console.log('User signed out');
+      }
+    });
+  </script>
+  <style>
+    :root {
+      /* Palette de couleurs */
+      --primary: #2E7D32;
+      --primary-light: #60ad5e;
+      --primary-dark: #005005;
+      --secondary: #FB8C00;
+      --text-primary: #212121;
+      --text-secondary: #757575;
+      --background: #FAFAFA;
+      --card-bg: #FFFFFF;
+      --border: #E0E0E0;
+      --shadow: rgba(0, 0, 0, 0.1);
+      
+      /* Typographie */
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --font-size-small: 0.875rem;
+      --font-size-regular: 1rem;
+      --font-size-large: 1.25rem;
+      --font-size-xlarge: 1.5rem;
+      
+      /* Espacement */
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      
+      /* Transitions */
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --transition-slow: 0.5s ease;
+      
+      /* Rayons de bordure */
+      --border-radius-sm: 4px;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      
+      /* Container widths */
+      --container-width: 1200px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--font-family);
+      background-color: var(--background);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+/* Styles pour le header avec logo - Fond blanc et texte noir */
+.site-header {
+  background-color: white;
+  color: var(--text-primary);
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: center;
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-logo {
+  max-width: 300px;
+  height: auto;
+  margin-bottom: var(--spacing-md);
+}
+
+.header-text h1 {
+  font-size: var(--font-size-xlarge);
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.header-text p {
+  font-size: var(--font-size-regular);
+  opacity: 0.9;
+  color: var(--text-secondary);
+}
+
+/* Media queries pour rendre le header responsive */
+@media (min-width: 768px) {
+  .header-content {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .header-logo {
+    margin-right: var(--spacing-lg);
+    margin-bottom: 0;
+  }
+  
+  .header-text {
+    text-align: left;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-logo {
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-logo {
+    max-width: 200px;
+  }
+}
+    /* Disposition globale */
+    .container {
+      display: flex;
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .sidebar {
+      width: 280px;
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius-md);
+      box-shadow: 0 2px 8px var(--shadow);
+      padding: var(--spacing-lg);
+      margin-right: var(--spacing-lg);
+      height: fit-content;
+      position: sticky;
+      top: var(--spacing-lg);
+    }
+    
+    .main-content {
+      flex: 1;
+      min-width: 0; /* Pour éviter le débordement */
+    }
+    
+    /* Recherche */
+    .search-bar {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .search-bar input {
+      width: 100%;
+      padding: var(--spacing-md);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm);
+      font-size: var(--font-size-regular);
+      background-color: white;
+      transition: border-color var(--transition-fast);
+    }
+    
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+    }
+    
+    /* Filtres */
+    .filter-section h3 {
+      font-size: var(--font-size-regular);
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+    
+    .filter-bar {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .tag-filter {
+      background-color: var(--background);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: var(--font-size-small);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .tag-filter:hover {
+      background-color: rgba(46, 125, 50, 0.1);
+    }
+    
+    .tag-filter.active {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    /* Date range filter */
+    .date-filter {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .date-filter select {
+      width: 100%;
+      padding: var(--spacing-sm);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm);
+      background-color: white;
+    }
+    
+    /* Séparateur */
+    .separator {
+      border-top: 1px solid var(--border);
+      margin: var(--spacing-lg) 0;
+    }
+    
+    /* Lien de soumission */
+    .submit-annonce {
+      text-align: center;
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .submit-annonce a {
+      display: inline-block;
+      background-color: var(--secondary);
+      color: white;
+      text-decoration: none;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--border-radius-sm);
+      font-weight: bold;
+      transition: background-color var(--transition-fast);
+    }
+    
+    .submit-annonce a:hover {
+      background-color: #F57C00;
+      transform: translateY(-2px);
+    }
+    
+    /* Boutons de tri */
+    .sort-section h3 {
+      font-size: var(--font-size-regular);
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+    
+    .sort-bar {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    
+    .sort-button {
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: var(--font-size-regular);
+      cursor: pointer;
+      text-align: left;
+      border-radius: var(--border-radius-sm);
+      transition: background-color var(--transition-fast);
+    }
+    
+    .sort-button:hover {
+      background-color: rgba(46, 125, 50, 0.1);
+    }
+    
+    .sort-button.active {
+      color: var(--primary);
+      font-weight: bold;
+    }
+    
+    .sort-button i {
+      margin-right: var(--spacing-sm);
+    }
+    
+    /* Compteur d'annonces */
+    .annonces-count {
+      margin-bottom: var(--spacing-md);
+      font-size: var(--font-size-small);
+      color: var(--text-secondary);
+    }
+    
+    /* Affichage des annonces */
+    .annonces-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      transition: opacity var(--transition-normal);
+    }
+    
+    .annonce {
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius-md);
+      box-shadow: 0 2px 8px var(--shadow);
+      overflow: hidden;
+      transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .annonce:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px var(--shadow);
+    }
+    
+    .annonce-image {
+      position: relative;
+      padding-top: 56.25%; /* Ratio 16:9 */
+      background-color: #f0f0f0;
+      overflow: hidden;
+    }
+    
+    .annonce-image img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform var(--transition-normal);
+    }
+    
+    .annonce:hover .annonce-image img {
+      transform: scale(1.05);
+    }
+    
+    .annonce-content {
+      padding: var(--spacing-lg);
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .annonce-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .annonce-tag {
+      background-color: rgba(46, 125, 50, 0.1);
+      color: var(--primary);
+      font-size: var(--font-size-small);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    
+    .annonce h2 {
+      font-size: var(--font-size-large);
+      margin-bottom: var(--spacing-sm);
+      font-weight: bold;
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+    
+    .annonce h2:hover {
+      color: var(--primary);
+    }
+    
+    .annonce .author {
+      font-style: italic;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+      font-size: var(--font-size-small);
+    }
+    
+    .annonce .date {
+      color: var(--text-secondary);
+      font-size: var(--font-size-small);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .annonce .excerpt {
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex-grow: 1;
+    }
+    
+    /* Boutons d'interaction */
+    .interaction-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--spacing-md);
+      border-top: 1px solid var(--border);
+    }
+    
+    .button-group {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    
+    .like-button, .views-display {
+      display: flex;
+      align-items: center;
+      font-size: var(--font-size-regular);
+      color: var(--text-secondary);
+    }
+    
+    .like-button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+    
+    .like-button:hover {
+      color: var(--primary);
+    }
+    
+    .like-button.active {
+      color: #E53935;
+    }
+    
+    .likes-count, .views-count {
+      margin-left: var(--spacing-xs);
+      font-size: var(--font-size-small);
+    }
+    
+    /* Pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: var(--spacing-xl);
+      gap: var(--spacing-sm);
+    }
+    
+    .pagination-button {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .pagination-button:hover {
+      background-color: rgba(46, 125, 50, 0.1);
+    }
+    
+    .pagination-button.active {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    /* Spinner et Toast */
+    .spinner {
+      border: 4px solid rgba(46, 125, 50, 0.1);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border-left-color: var(--primary);
+      animation: spin 1s linear infinite;
+      margin: var(--spacing-xl) auto;
+      display: none;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 1000;
+      pointer-events: none;
+    }
+    
+    .toast {
+      background-color: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: var(--border-radius-md);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    /* Styles du modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+    }
+    
+    .modal.active {
+      opacity: 1;
+    }
+    
+    .modal-content {
+      background-color: var(--card-bg);
+      margin: 5% auto;
+      width: 90%;
+      max-width: 800px;
+      border-radius: var(--border-radius-lg);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: transform var(--transition-normal), opacity var(--transition-normal);
+    }
+    
+    .modal.active .modal-content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .modal-header {
+      padding: var(--spacing-lg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    
+    .modal-title {
+      font-size: var(--font-size-xlarge);
+      margin-right: var(--spacing-md);
+    }
+    
+    .close {
+      color: var(--text-secondary);
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color var(--transition-fast);
+    }
+    
+    .close:hover {
+      color: var(--text-primary);
+    }
+    
+    .modal-image {
+      width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      background-color: #f0f0f0;
+      margin: 0 auto;
+      display: block;
+    }
+    
+    .modal-body {
+      padding: var(--spacing-lg);
+    }
+    
+    .modal-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+      color: var(--text-secondary);
+      font-size: var(--font-size-small);
+    }
+    
+    .modal-author {
+      font-style: italic;
+    }
+    
+    .modal-date {
+      display: flex;
+      align-items: center;
+    }
+    
+    .modal-date i {
+      margin-right: var(--spacing-xs);
+    }
+    
+    .modal-description {
+      line-height: 1.8;
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .modal-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .modal-tag {
+      background-color: rgba(46, 125, 50, 0.1);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: var(--font-size-small);
+    }
+    
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      padding-top: var(--spacing-lg);
+      border-top: 1px solid var(--border);
+    }
+    
+    .modal-action-buttons {
+      display: flex;
+      gap: var(--spacing-md);
+    }
+    
+    .modal-action-button {
+      display: flex;
+      align-items: center;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: var(--font-size-regular);
+      transition: color var(--transition-fast);
+    }
+    
+    .modal-action-button:hover {
+      color: var(--primary);
+    }
+    
+    .modal-action-button i {
+      margin-right: var(--spacing-xs);
+    }
+    
+    .num-annonce {
+      color: var(--text-secondary);
+      font-size: var(--font-size-small);
+    }
+    
+    /* Section commentaires dans le modal */
+    .comments-section {
+      margin-top: var(--spacing-xl);
+      border-top: 1px solid var(--border);
+      padding-top: var(--spacing-lg);
+    }
+    
+    .comments-section h3 {
+      font-size: var(--font-size-large);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .comment-form {
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .comment-form textarea {
+      width: 100%;
+      padding: var(--spacing-md);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm);
+      min-height: 100px;
+      resize: vertical;
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .comment-form button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+    
+    .comment-form button:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+    
+    .comment {
+      padding: var(--spacing-md);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-sm);
+      background-color: var(--background);
+    }
+    
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-sm);
+      font-size: var(--font-size-small);
+      color: var(--text-secondary);
+    }
+    
+    .comment-author {
+      font-weight: bold;
+    }
+    
+    .comment-date {
+      font-style: italic;
+    }
+    
+    .comment-content {
+      font-size: var(--font-size-regular);
+    }
+    /* Styles pour la section À propos */
+.about-section {
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.about-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: var(--background);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-regular);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.about-button:hover {
+  background-color: rgba(46, 125, 50, 0.1);
+  transform: translateY(-2px);
+}
+
+.about-button i {
+  margin-right: var(--spacing-sm);
+}
+
+/* Styles pour le modal À propos */
+.about-modal .modal-content {
+  max-width: 700px;
+}
+
+.about-modal .modal-body {
+  padding: var(--spacing-xl);
+  line-height: 1.8;
+}
+
+.about-title {
+  color: var(--primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.about-text p {
+  margin-bottom: var(--spacing-md);
+}
+    /* Menu hamburger mobile */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      text-align: center;
+      line-height: 50px;
+      font-size: 24px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      cursor: pointer;
+    }
+    
+    /* Règles Responsive */
+    @media (max-width: 992px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: var(--spacing-lg);
+        position: static;
+      }
+      
+      .annonces-container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .annonces-container {
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: var(--spacing-md) var(--spacing-sm);
+      }
+      
+      .sidebar {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+        display: none;
+      }
+      
+      .sidebar.active {
+        display: block;
+      }
+      
+      .mobile-menu-toggle {
+        display: block;
+      }
+      
+      .filter-options {
+        flex-direction: column;
+      }
+      
+      .modal-header {
+        padding: var(--spacing-md);
+      }
+      
+      .modal-body {
+        padding: var(--spacing-md);
+      }
+      
+      .modal-actions {
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header du site avec logo ajouté -->
+<header class="site-header">
+  <div class="header-content">
+    <img src="https://lacagette-coop.fr/files/CagettePirate_logo_pirate_longpng_20241004204418_20241004204514.png" alt="Logo La Cagette Pirate" class="header-logo">
+    <div class="header-text">
+      <h1>Annonces de La Cagette Pirate</h1>
+      <p>Découvrez les événements et informations partagés par les membres</p>
     </div>
+  </div>
+</header>
 
-    <h1>Hello World!</h1>
+  <div class="container">
+    <!-- Barre latérale -->
+    <div class="sidebar">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Rechercher une annonce...">
+      </div>
+      
+      <!-- Sélecteurs de catégories -->
+      <div class="filter-section">
+        <h3>Catégories</h3>
+        <div class="filter-options">
+          <button class="tag-filter active" data-tag="alaune">Annonces à la une</button>
+		  <button class="tag-filter" data-tag="1">Événement</button>
+          <button class="tag-filter" data-tag="2">Point de vue / Tribune</button>
+          <button class="tag-filter" data-tag="3">Recette de cuisine</button>
+          <button class="tag-filter" data-tag="4">Autre info</button>
+        </div>
+      </div>
+      
+      <!-- Filtre par date -->
+      <div class="date-filter">
+        <h3>Période</h3>
+        <select id="dateFilter">
+          <option value="all">Toutes les périodes</option>
+          <option value="month">Dernier mois</option>
+          <option value="3months" selected>3 derniers mois</option>
+          <option value="6months">6 derniers mois</option>
+          <option value="year">Dernière année</option>
+        </select>
+      </div>
+      
+      <!-- Séparateur et lien de soumission -->
+      <div class="separator"></div>
+      <div class="submit-annonce">
+        <a href="https://lacagette-coop.fr/?CagettePirateForm" target="_blank">Soumettre une annonce</a>
+      </div>
+      <div class="separator"></div>
+      
+      <!-- Boutons de tri stylisés -->
+      <div class="sort-section">
+        <h3>Trier par</h3>
+        <div class="sort-bar">
+          <button class="sort-button" id="sortByRandomBtn"><i class="fas fa-random"></i> Tri au hasard</button>
+          <button class="sort-button active" id="sortByDateBtn"><i class="fas fa-calendar-alt"></i> Date</button>
+          <button class="sort-button" id="sortByViewsBtn"><i class="fas fa-eye"></i> Vues</button>
+		  <button class="sort-button" id="sortByLikesBtn"><i class="fas fa-heart"></i> Likes</button>
+        </div>
+      </div>
+	<!-- Lien À propos à ajouter dans la sidebar -->
+	<div class="separator"></div>
+	<div class="about-section">
+	  <button id="aboutButton" class="about-button">
+	    <i class="fas fa-info-circle"></i> À propos de la Cagette Pirate
+	  </button>
+	</div>
+    </div>
+    
+    <!-- Contenu principal -->
+    <div class="main-content">
+      <div class="annonces-count">Affichage de <span id="countAnnonces">0</span> annonces</div>
+      <div class="spinner" id="spinner"></div>
+      <div class="annonces-container" id="annoncesContainer"></div>
+      
+      <!-- Pagination -->
+      <div class="pagination" id="pagination">
+        <!-- Généré dynamiquement par JS -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bouton Menu Mobile -->
+  <div class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </div>
 
-    <p>
-      This is a simple plain-HTML website on GitLab Pages, without any fancy static site generator.
-    </p>
-  </body>
+	<!-- Modal À propos -->
+<div id="aboutModal" class="modal about-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">À propos de la Cagette Pirate</h2>
+      <span class="close" id="closeAboutModal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="about-text">
+        <!-- Vous pourrez remplacer ce contenu par votre propre texte de présentation -->
+        <h3 class="about-title">Qui sommes-nous ?</h3>
+        <p>
+          La Cagette Pirate est une initiative collective de membres de La Cagette, supermarché coopératif et participatif de Montpellier. Nous portons cet espace d'échange et de partage d'informations au sein de notre communauté de coopérateur.ices.
+        </p>
+	  <p>
+          La Cagette Pirate est portée par Grégori Akermann, Anna Buy, Elie Daviron, Catherine Gustau, Antonin Molino, en lien étroit avec le Comité Communication de la Cagette.
+        </p>
+        
+        <h3 class="about-title">Notre ambition</h3>
+        <p>
+          Nous souhaitons créer un espace d'expression libre permettant aux coopérateur.ices de partager des événements, des opinions, des recettes ou tout autres informations pertinentes pour les membres.
+        </p>
+        
+        <h3 class="about-title">Comment participer ?</h3>
+        <p>
+          Tous les membres de La Cagette peuvent soumettre une annonce en utilisant le formulaire disponible sur le site. Les contributions sont modérées par un collectif bénévole pour garantir le respect de notre charte.
+        </p>
+        
+        <p>
+          <em>Note : La Cagette Pirate est une initiative indépendante et n'engage pas officiellement La Cagette, supermarché coopératif et participatif de Montpellier.</em>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"></h2>
+        <span class="close">&times;</span>
+      </div>
+      <img class="modal-image" alt="">
+      <div class="modal-body">
+        <div class="modal-meta">
+          <div class="modal-author"></div>
+          <div class="modal-date">
+            <i class="far fa-calendar-alt"></i>
+            <span></span>
+          </div>
+        </div>
+        <div class="modal-tags"></div>
+        <div class="modal-description"></div>
+        <div class="num-annonce"></div>
+        
+        <div class="modal-actions">
+          <div class="modal-action-buttons">
+            <button class="modal-action-button modal-like-button">
+              <i class="far fa-heart"></i> J'aime
+            </button>
+          </div>
+          <div class="views-display">
+            <i class="fas fa-eye"></i>
+            <span class="views-count">0</span> vues
+          </div>
+        </div>
+        
+        <!-- Section commentaires -->
+        <div class="comments-section">
+          <h3>Commentaires</h3>
+          <div class="comment-form">
+            <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
+            <button id="submitComment">Envoyer</button>
+          </div>
+          <div class="comments-list" id="commentsList">
+            <!-- Commentaires générés dynamiquement -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Container pour les toasts -->
+  <div class="toast-container">
+    <div id="toast" class="toast"></div>
+  </div>
+  
+  <script>
+    // Variables globales
+    let annonces = [];
+    let filteredAnnonces = [];
+    let currentPage = 1;
+    let itemsPerPage = 8;
+    let activeCategory = "alaune";
+    let activeDateFilter = "3months";
+    let activeSortMethod = "date";
+    let sortByDateDesc = true;
+    let sortByViewsDesc = true;
+    let sortByLikesDesc = true;
+    
+    // Éléments du DOM
+    const annoncesContainer = document.getElementById('annoncesContainer');
+    const spinner = document.getElementById('spinner');
+    const countAnnoncesElement = document.getElementById('countAnnonces');
+    const modal = document.getElementById('modal');
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const sidebar = document.querySelector('.sidebar');
+    
+    // Cache pour les vues et les likes
+    const viewsCache = {};
+    const likesCache = {};
+    
+    // Initialisation de l'application
+    function initApp() {
+      // Afficher le spinner pendant le chargement
+      showSpinner();
+      
+      // Charger les données depuis l'API
+      fetch('https://lacagette-coop.fr/?BazaR/json&demand=entries&id=76')
+        .then(response => response.json())
+        .then(data => {
+          annonces = Object.values(data);
+          console.log("Data loaded:", annonces.length, "entries");
+          
+          // Précharger toutes les données de vues et likes en une seule fois
+          return Promise.all([
+            loadAllViewsCounts(),
+            loadAllLikesCounts()
+          ]);
+        })
+        .then(() => {
+          // Appliquer les filtres et tris initiaux
+          applySortAndFilters();
+        })
+        .catch(error => {
+          console.error("Error loading data:", error);
+          hideSpinner();
+          showToast("Erreur lors du chargement des données", "error");
+        });
+    }
+    
+    // Préchargement de toutes les données de vues
+    function loadAllViewsCounts() {
+      const clicksRef = firebase.database().ref('clicks');
+      return clicksRef.once('value')
+        .then(snapshot => {
+          const clicks = snapshot.val() || {};
+          // Mettre en cache toutes les valeurs
+          Object.keys(clicks).forEach(id => {
+            viewsCache[id] = clicks[id];
+          });
+        });
+    }
+    
+    // Préchargement de toutes les données de likes
+    function loadAllLikesCounts() {
+      const likesRef = firebase.database().ref('likes');
+      return likesRef.once('value')
+        .then(snapshot => {
+          const likes = snapshot.val() || {};
+          // Mettre en cache toutes les valeurs
+          Object.keys(likes).forEach(id => {
+            likesCache[id] = likes[id];
+          });
+        });
+    }
+    
+    // Appliquer les filtres et tris
+    function applySortAndFilters() {
+      // Réinitialiser la page actuelle
+      currentPage = 1;
+      
+      // Appliquer les filtres
+      filterAnnonces();
+      
+      // Appliquer le tri
+      sortAnnonces();
+      
+      // Afficher les annonces
+      displayAnnonces();
+    }
+    
+    // Filtrer les annonces
+function filterAnnonces() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const now = new Date();
+  
+  // Calcul de la date de limite selon le filtre de date
+  let dateLimit = new Date();
+  switch(activeDateFilter) {
+    case "month":
+      dateLimit.setMonth(now.getMonth() - 1);
+      break;
+    case "3months":
+      dateLimit.setMonth(now.getMonth() - 3);
+      break;
+    case "6months":
+      dateLimit.setMonth(now.getMonth() - 6);
+      break;
+    case "year":
+      dateLimit.setFullYear(now.getFullYear() - 1);
+      break;
+    default:
+      dateLimit.setFullYear(now.getFullYear() - 10); // Pratiquement toutes les annonces
+  }
+  
+  filteredAnnonces = annonces.filter(entry => {
+    // Vérifier si l'annonce est modérée
+    if (entry.bf_modo !== "1" && entry.bf_modo !== "10") return false;
+    
+    // Vérifier la catégorie
+    const tags = entry.checkboxListeTagbf_checkbox_group.split(',');
+    let matchesCategory = true;
+    
+    if (activeCategory === "alaune") {
+      // Pour "À la une", chercher les annonces marquées par le comité de rédaction (bf_modo = 10)
+      matchesCategory = entry.bf_modo === "10";
+    } else if (activeCategory) {
+      // Pour les autres catégories, vérifier les tags normalement
+      matchesCategory = tags.includes(activeCategory);
+    }
+    
+    // Vérifier la date
+    const entryDate = new Date(entry.date_maj_fiche);
+    const isRecentEnough = entryDate >= dateLimit;
+    
+    // Vérifier les termes de recherche
+    const matchesSearch = 
+      entry.bf_titre.toLowerCase().includes(searchTerm) || 
+      entry.bf_description.toLowerCase().includes(searchTerm) || 
+      entry.bf_description2.toLowerCase().includes(searchTerm);
+    
+    return matchesCategory && isRecentEnough && matchesSearch;
+  });
+  
+  // Mettre à jour le compteur d'annonces
+  countAnnoncesElement.textContent = filteredAnnonces.length;
+  
+  // Mettre à jour la pagination
+  updatePagination();
+}
+    
+    // Trier les annonces
+    function sortAnnonces() {
+      switch(activeSortMethod) {
+        case "random":
+          filteredAnnonces.sort(() => Math.random() - 0.5);
+          break;
+          
+        case "date":
+          filteredAnnonces.sort((a, b) => {
+            const dateA = new Date(a.date_creation_fiche);
+            const dateB = new Date(b.date_creation_fiche);
+            return sortByDateDesc ? dateB - dateA : dateA - dateB;
+          });
+          break;
+          
+        case "views":
+          filteredAnnonces.sort((a, b) => {
+            const viewsA = viewsCache[a.id_fiche] || 0;
+            const viewsB = viewsCache[b.id_fiche] || 0;
+            return sortByViewsDesc ? viewsB - viewsA : viewsA - viewsB;
+          });
+          break;
+          
+        case "likes":
+          filteredAnnonces.sort((a, b) => {
+            const likesA = likesCache[a.id_fiche] || 0;
+            const likesB = likesCache[b.id_fiche] || 0;
+            return sortByLikesDesc ? likesB - likesA : likesA - likesB;
+          });
+          break;
+      }
+    }
+    
+    // Afficher les annonces
+    function displayAnnonces() {
+      showSpinner();
+      
+      // Fade out
+      annoncesContainer.style.opacity = '0';
+      
+      setTimeout(() => {
+        // Vider le conteneur
+        annoncesContainer.innerHTML = '';
+        
+        // Calculer les indices de début et de fin pour la pagination
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = Math.min(startIndex + itemsPerPage, filteredAnnonces.length);
+        
+        // Afficher les annonces pour la page courante
+        for (let i = startIndex; i < endIndex; i++) {
+          const entry = filteredAnnonces[i];
+          createAnnonceCard(entry);
+        }
+        
+        // Fade in
+        annoncesContainer.style.opacity = '1';
+        hideSpinner();
+      }, 300);
+    }
+    
+    // Créer une carte d'annonce
+    function createAnnonceCard(entry) {
+      const annonceDiv = document.createElement('div');
+      annonceDiv.classList.add('annonce');
+      annonceDiv.setAttribute('data-id', entry.id_fiche);
+      
+      // Formater la date
+      const entryDate = new Date(entry.date_creation_fiche);
+      const formattedDate = entryDate.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      
+	// Déterminer les tags de l'annonce
+	const tagsArray = entry.checkboxListeTagbf_checkbox_group.split(',');
+	const tagsMap = {
+	  "1": "Événement",
+	  "2": "Tribune",
+	  "3": "Recette",
+	  "4": "Info",
+	  "alaune": "À la une"
+	};
+
+	// Ajouter le tag "À la une" si l'annonce est mise en avant par le comité (bf_modo = 10)
+	if (entry.bf_modo === "10" && !tagsArray.includes("alaune")) {
+	  tagsArray.push("alaune");
+	}
+      
+      // Obtenir les vues et likes
+      const views = viewsCache[entry.id_fiche] || 0;
+      const likes = likesCache[entry.id_fiche] || 0;
+      
+      // Vérifier si l'annonce est likée
+      const likedAnnonces = JSON.parse(localStorage.getItem('likedAnnonces')) || {};
+      const isLiked = likedAnnonces[entry.id_fiche];
+      
+      // Créer le HTML pour la carte
+      annonceDiv.innerHTML = `
+        <div class="annonce-image">
+          ${entry.fichierbf_file 
+            ? `<img src="https://lacagette-coop.fr/files/${entry.fichierbf_file}" alt="${entry.bf_titre}" loading="lazy">`
+            : `<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f0f0f0'/%3E%3Ctext x='50' y='50' font-family='Arial' font-size='14' text-anchor='middle' dominant-baseline='middle' fill='%23aaa'%3ESans image%3C/text%3E%3C/svg%3E" alt="Pas d'image">`
+          }
+        </div>
+        <div class="annonce-content">
+          <div class="annonce-tags">
+            ${tagsArray.map(tag => `<span class="annonce-tag">${tagsMap[tag] || tag}</span>`).join('')}
+          </div>
+          <h2>${entry.bf_titre}</h2>
+          <p class="author">${entry.bf_description2 || 'Anonyme'} ${entry.bf_description1 || ''}</p>
+          <p class="date"><i class="far fa-calendar-alt"></i> ${formattedDate}</p>
+          <p class="excerpt">${entry.bf_description.substring(0, 150)}${entry.bf_description.length > 150 ? '...' : ''}</p>
+          <div class="interaction-buttons">
+            <div class="button-group">
+              <button class="like-button ${isLiked ? 'active' : ''}" data-id="${entry.id_fiche}">
+                <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
+                <span class="likes-count">${likes}</span>
+              </button>
+            </div>
+            <div class="views-display">
+              <i class="fas fa-eye"></i>
+              <span class="views-count">${views}</span>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Ajouter les écouteurs d'événements
+      annonceDiv.querySelector('h2').addEventListener('click', () => openModal(entry));
+      annonceDiv.querySelector('.annonce-image').addEventListener('click', () => openModal(entry));
+      
+      // Bouton "J'aime"
+      const likeButton = annonceDiv.querySelector('.like-button');
+      likeButton.addEventListener('click', () => toggleLike(entry.id_fiche, likeButton));
+      
+      // Ajouter la carte au conteneur
+      annoncesContainer.appendChild(annonceDiv);
+    }
+    
+    // Mettre à jour la pagination
+    function updatePagination() {
+      const paginationContainer = document.getElementById('pagination');
+      paginationContainer.innerHTML = '';
+      
+      const totalPages = Math.ceil(filteredAnnonces.length / itemsPerPage);
+      
+      if (totalPages <= 1) {
+        // Pas besoin de pagination si une seule page
+        return;
+      }
+      
+      // Ajouter le bouton précédent
+      const prevButton = document.createElement('button');
+      prevButton.classList.add('pagination-button');
+      prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+      prevButton.disabled = currentPage === 1;
+      prevButton.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          displayAnnonces();
+          updatePaginationButtons();
+        }
+      });
+      paginationContainer.appendChild(prevButton);
+      
+      // Calculer les pages à afficher
+      const maxVisiblePages = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      
+      // Ajuster si on est près de la fin
+      if (endPage - startPage + 1 < maxVisiblePages) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      }
+      
+      // Afficher la première page si nécessaire
+      if (startPage > 1) {
+        const firstPageButton = document.createElement('button');
+        firstPageButton.classList.add('pagination-button');
+        firstPageButton.textContent = '1';
+        firstPageButton.addEventListener('click', () => {
+          currentPage = 1;
+          displayAnnonces();
+          updatePaginationButtons();
+        });
+        paginationContainer.appendChild(firstPageButton);
+        
+        if (startPage > 2) {
+          const ellipsis = document.createElement('span');
+          ellipsis.classList.add('pagination-ellipsis');
+          ellipsis.textContent = '...';
+          paginationContainer.appendChild(ellipsis);
+        }
+      }
+      
+      // Afficher les pages
+      for (let i = startPage; i <= endPage; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.classList.add('pagination-button');
+        if (i === currentPage) {
+          pageButton.classList.add('active');
+        }
+        pageButton.textContent = i;
+        pageButton.addEventListener('click', () => {
+          currentPage = i;
+          displayAnnonces();
+          updatePaginationButtons();
+        });
+        paginationContainer.appendChild(pageButton);
+      }
+      
+      // Afficher la dernière page si nécessaire
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          const ellipsis = document.createElement('span');
+          ellipsis.classList.add('pagination-ellipsis');
+          ellipsis.textContent = '...';
+          paginationContainer.appendChild(ellipsis);
+        }
+        
+        const lastPageButton = document.createElement('button');
+        lastPageButton.classList.add('pagination-button');
+        lastPageButton.textContent = totalPages;
+        lastPageButton.addEventListener('click', () => {
+          currentPage = totalPages;
+          displayAnnonces();
+          updatePaginationButtons();
+        });
+        paginationContainer.appendChild(lastPageButton);
+      }
+      
+      // Ajouter le bouton suivant
+      const nextButton = document.createElement('button');
+      nextButton.classList.add('pagination-button');
+      nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+      nextButton.disabled = currentPage === totalPages;
+      nextButton.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          displayAnnonces();
+          updatePaginationButtons();
+        }
+      });
+      paginationContainer.appendChild(nextButton);
+    }
+    
+    // Mettre à jour les boutons de pagination
+    function updatePaginationButtons() {
+      const buttons = document.querySelectorAll('.pagination-button');
+      buttons.forEach(button => {
+        if (button.textContent == currentPage) {
+          button.classList.add('active');
+        } else {
+          button.classList.remove('active');
+        }
+      });
+    }
+    
+    // Ouvrir le modal avec les détails de l'annonce
+    function openModal(entry) {
+      // Incrémenter le compteur de vues
+      increaseViewCount(entry.id_fiche);
+      
+      // Formater la date
+      const entryDate = new Date(entry.date_creation_fiche);
+      const formattedDate = entryDate.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
+      
+	// Déterminer les tags de l'annonce
+	const tagsArray = entry.checkboxListeTagbf_checkbox_group.split(',');
+	const tagsMap = {
+	  "1": "Événement",
+	  "2": "Tribune",
+	  "3": "Recette",
+	  "4": "Info",
+	  "alaune": "À la une"
+	};
+
+	// Ajouter le tag "À la une" si l'annonce est mise en avant par le comité (bf_modo = 10)
+	if (entry.bf_modo === "10" && !tagsArray.includes("alaune")) {
+	  tagsArray.push("alaune");
+	}
+      
+      // Vérifier si l'annonce est likée
+      const likedAnnonces = JSON.parse(localStorage.getItem('likedAnnonces')) || {};
+      const isLiked = likedAnnonces[entry.id_fiche];
+      
+      // Remplir le modal avec les détails
+      document.querySelector('.modal-title').textContent = entry.bf_titre;
+      document.querySelector('.modal-author').textContent = `${entry.bf_description2 || 'Anonyme'} ${entry.bf_description1 || ''}`;
+      document.querySelector('.modal-date span').textContent = formattedDate;
+      
+      const modalImage = document.querySelector('.modal-image');
+      if (entry.fichierbf_file) {
+        modalImage.src = `https://lacagette-coop.fr/files/${entry.fichierbf_file}`;
+        modalImage.alt = entry.bf_titre;
+        modalImage.style.display = 'block';
+      } else {
+        modalImage.style.display = 'none';
+      }
+      
+      // Afficher les tags
+      const modalTags = document.querySelector('.modal-tags');
+      modalTags.innerHTML = '';
+      tagsArray.forEach(tag => {
+        const tagSpan = document.createElement('span');
+        tagSpan.classList.add('modal-tag');
+        tagSpan.textContent = tagsMap[tag] || tag;
+        modalTags.appendChild(tagSpan);
+      });
+      
+      // Afficher la description
+      document.querySelector('.modal-description').innerHTML = entry.bf_description.replace(/\n\r?/g, '<br>');
+      document.querySelector('.num-annonce').textContent = `Numéro d'annonce : ${entry.date_creation_fiche}`;
+      
+      // Afficher les vues
+      document.querySelector('.modal-content .views-count').textContent = viewsCache[entry.id_fiche] || 0;
+      
+      // Mettre à jour les boutons d'action
+      const modalLikeButton = document.querySelector('.modal-like-button');
+      modalLikeButton.innerHTML = `<i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> J'aime`;
+      modalLikeButton.onclick = () => toggleLike(entry.id_fiche, modalLikeButton);
+      
+      // Charger les commentaires
+      loadComments(entry.id_fiche);
+      
+      // Configurer le formulaire de commentaire
+      const commentForm = document.querySelector('.comment-form');
+      commentForm.onsubmit = (e) => {
+        e.preventDefault();
+        const commentText = document.getElementById('commentInput').value.trim();
+        if (commentText) {
+          addComment(entry.id_fiche, commentText);
+        }
+      };
+      
+      document.getElementById('submitComment').onclick = () => {
+        const commentText = document.getElementById('commentInput').value.trim();
+        if (commentText) {
+          addComment(entry.id_fiche, commentText);
+        }
+      };
+      
+      // Afficher le modal
+      modal.style.display = 'block';
+      setTimeout(() => {
+        modal.classList.add('active');
+      }, 10);
+    }
+    
+    // Fermer le modal
+    function closeModal() {
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+    
+	// Incrémenter le compteur de vues
+	function increaseViewCount(annonceId) {
+	  const clickRef = firebase.database().ref('clicks/' + annonceId);
+	  clickRef.transaction(currentClicks => {
+		const newValue = (currentClicks || 0) + 1;
+		viewsCache[annonceId] = newValue;
+		
+		// Mettre à jour l'affichage des vues dans le modal si ouvert
+		if (modal.style.display === 'block') {
+		  document.querySelector('.modal-content .views-count').textContent = newValue;
+		}
+		
+		return newValue;
+	  });
+	}
+    
+    // Toggle Like
+    function toggleLike(annonceId, button) {
+      const likedAnnonces = JSON.parse(localStorage.getItem('likedAnnonces')) || {};
+      const isLiked = likedAnnonces[annonceId];
+      
+      if (isLiked) {
+        // Unlike
+        const likesRef = firebase.database().ref('likes/' + annonceId);
+        likesRef.transaction(currentLikes => {
+          const newValue = Math.max(0, (currentLikes || 0) - 1);
+          likesCache[annonceId] = newValue;
+          return newValue;
+        }, (error, committed, snapshot) => {
+          if (committed) {
+            delete likedAnnonces[annonceId];
+            localStorage.setItem('likedAnnonces', JSON.stringify(likedAnnonces));
+            
+            // Mettre à jour l'UI
+            updateLikeButtons(annonceId, false);
+            showToast("Je n'aime plus");
+          }
+        });
+      } else {
+        // Like
+        const likesRef = firebase.database().ref('likes/' + annonceId);
+        likesRef.transaction(currentLikes => {
+          const newValue = (currentLikes || 0) + 1;
+          likesCache[annonceId] = newValue;
+          return newValue;
+        }, (error, committed, snapshot) => {
+          if (committed) {
+            likedAnnonces[annonceId] = true;
+            localStorage.setItem('likedAnnonces', JSON.stringify(likedAnnonces));
+            
+            // Mettre à jour l'UI
+            updateLikeButtons(annonceId, true);
+            showToast("J'aime !");
+          }
+        });
+      }
+    }
+    
+    // Mettre à jour tous les boutons like pour une annonce
+    function updateLikeButtons(annonceId, isLiked) {
+      // Mettre à jour dans les cartes
+      const cardLikeButton = document.querySelector(`.annonce[data-id="${annonceId}"] .like-button`);
+      if (cardLikeButton) {
+        cardLikeButton.classList.toggle('active', isLiked);
+        cardLikeButton.querySelector('i').className = isLiked ? 'fas fa-heart' : 'far fa-heart';
+        cardLikeButton.querySelector('.likes-count').textContent = likesCache[annonceId] || 0;
+      }
+      
+      // Mettre à jour dans le modal
+      if (modal.style.display === 'block') {
+        const modalLikeButton = document.querySelector('.modal-like-button');
+        modalLikeButton.innerHTML = `<i class="${isLiked ? 'fas' : 'far'} fa-heart"></i> J'aime`;
+      }
+    }
+    
+    // Charger les commentaires
+    function loadComments(annonceId) {
+      const commentsRef = firebase.database().ref('comments/' + annonceId);
+      const commentsList = document.getElementById('commentsList');
+      commentsList.innerHTML = '';
+      
+      commentsRef.orderByChild('timestamp').once('value', snapshot => {
+        const comments = snapshot.val();
+        if (!comments) {
+          const noCommentsMessage = document.createElement('p');
+          noCommentsMessage.textContent = "Aucun commentaire pour le moment. Soyez le premier à partager votre avis !";
+          noCommentsMessage.className = "no-comments";
+          commentsList.appendChild(noCommentsMessage);
+          return;
+        }
+        
+        // Convertir l'objet en tableau et trier par date
+        const commentsArray = Object.values(comments);
+        commentsArray.sort((a, b) => b.timestamp - a.timestamp);
+        
+        commentsArray.forEach(comment => {
+          const commentElement = document.createElement('div');
+          commentElement.className = 'comment';
+          
+          // Formater la date du commentaire
+          const commentDate = new Date(comment.timestamp);
+          const formattedDate = commentDate.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          
+          commentElement.innerHTML = `
+            <div class="comment-header">
+              <span class="comment-author">${comment.author || 'Anonyme'}</span>
+              <span class="comment-date">${formattedDate}</span>
+            </div>
+            <div class="comment-content">${comment.text}</div>
+          `;
+          
+          commentsList.appendChild(commentElement);
+        });
+      });
+    }
+    
+    // Ajouter un commentaire
+    function addComment(annonceId, commentText) {
+      // Générer un ID unique pour le commentaire
+      const commentId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+      
+      // Créer l'objet commentaire
+      const comment = {
+        id: commentId,
+        author: "Visiteur", // Pourrait être remplacé par un nom saisi par l'utilisateur
+        text: commentText,
+        timestamp: Date.now()
+      };
+      
+      // Sauvegarder dans Firebase
+      const commentRef = firebase.database().ref('comments/' + annonceId + '/' + commentId);
+      commentRef.set(comment)
+        .then(() => {
+          // Réinitialiser le champ de texte
+          document.getElementById('commentInput').value = '';
+          
+          // Recharger les commentaires
+          loadComments(annonceId);
+          
+          // Afficher un message de confirmation
+          showToast("Commentaire ajouté");
+        })
+        .catch(error => {
+          console.error("Erreur lors de l'ajout du commentaire:", error);
+          showToast("Erreur lors de l'ajout du commentaire", "error");
+        });
+    }
+    
+    // Fonctions utilitaires
+    
+    // Afficher le spinner
+    function showSpinner() {
+      spinner.style.display = 'block';
+    }
+    
+    // Cacher le spinner
+    function hideSpinner() {
+      spinner.style.display = 'none';
+    }
+    
+    // Afficher un toast
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast';
+      
+      // Ajouter une classe selon le type de message
+      if (type === 'error') {
+        toast.classList.add('error');
+      } else {
+        toast.classList.add('success');
+      }
+      
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Mise en place des écouteurs d'événements
+    
+    // Filtres de catégories
+    document.querySelectorAll('.tag-filter').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.tag-filter').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        activeCategory = button.getAttribute('data-tag');
+        applySortAndFilters();
+      });
+    });
+    
+    // Filtre de date
+    document.getElementById('dateFilter').addEventListener('change', function() {
+      activeDateFilter = this.value;
+      applySortAndFilters();
+    });
+    
+    // Recherche
+    document.getElementById('searchInput').addEventListener('input', debounce(function() {
+      applySortAndFilters();
+    }, 300));
+    
+    // Tri au hasard
+    document.getElementById('sortByRandomBtn').addEventListener('click', function() {
+      document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      activeSortMethod = 'random';
+      applySortAndFilters();
+    });
+    
+    // Tri par date
+    document.getElementById('sortByDateBtn').addEventListener('click', function() {
+      document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      activeSortMethod = 'date';
+      sortByDateDesc = !sortByDateDesc;
+      applySortAndFilters();
+    });
+    
+    // Tri par vues
+    document.getElementById('sortByViewsBtn').addEventListener('click', function() {
+      document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      activeSortMethod = 'views';
+      sortByViewsDesc = !sortByViewsDesc;
+      applySortAndFilters();
+    });
+    
+    // Tri par likes
+    document.getElementById('sortByLikesBtn').addEventListener('click', function() {
+      document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      activeSortMethod = 'likes';
+      sortByLikesDesc = !sortByLikesDesc;
+      applySortAndFilters();
+    });
+    
+    // Fermeture du modal
+    document.querySelector('#modal .close').addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+      if (event.target == modal) closeModal();
+    });
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.style.display === 'block') closeModal();
+    });
+    
+    // Toggle menu mobile
+    mobileMenuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+    
+    // Fonction debounce pour éviter trop d'appels pendant la frappe
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+          func.apply(context, args);
+        }, wait);
+      };
+    }
+    
+    // Vérification des changements de taille de la fenêtre
+    window.addEventListener('resize', debounce(function() {
+      // Adapter la pagination en fonction de la taille de l'écran
+      if (window.innerWidth < 768) {
+        itemsPerPage = 4;
+      } else {
+        itemsPerPage = 8;
+      }
+      updatePagination();
+      displayAnnonces();
+    }, 200));
+    
+    // Lazy loading des images avec Intersection Observer
+    let lazyImageObserver;
+    function setupLazyLoading() {
+      if ('IntersectionObserver' in window) {
+        lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              const lazyImage = entry.target;
+              lazyImage.src = lazyImage.dataset.src;
+              lazyImage.classList.remove('lazy');
+              lazyImageObserver.unobserve(lazyImage);
+            }
+          });
+        });
+        
+        document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
+          lazyImageObserver.observe(lazyImage);
+        });
+      } else {
+        // Fallback pour les navigateurs qui ne supportent pas Intersection Observer
+        document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
+          lazyImage.src = lazyImage.dataset.src;
+          lazyImage.classList.remove('lazy');
+        });
+      }
+    }
+    
+    // Cacher automatiquement la sidebar sur mobile lors du clic sur un filtre
+    document.querySelectorAll('.sidebar button').forEach(button => {
+      button.addEventListener('click', () => {
+        if (window.innerWidth < 600) {
+          setTimeout(() => {
+            sidebar.classList.remove('active');
+          }, 300);
+        }
+      });
+    });
+
+	  // Gestion du modal À propos
+const aboutButton = document.getElementById('aboutButton');
+const aboutModal = document.getElementById('aboutModal');
+const closeAboutModal = document.getElementById('closeAboutModal');
+
+// Ouvrir le modal
+aboutButton.addEventListener('click', () => {
+  aboutModal.style.display = 'block';
+  setTimeout(() => {
+    aboutModal.classList.add('active');
+  }, 10);
+});
+
+// Fermer le modal en cliquant sur la croix
+closeAboutModal.addEventListener('click', () => {
+  aboutModal.classList.remove('active');
+  setTimeout(() => {
+    aboutModal.style.display = 'none';
+  }, 300);
+});
+
+// Fermer le modal en cliquant en dehors du contenu
+window.addEventListener('click', (event) => {
+  if (event.target === aboutModal) {
+    aboutModal.classList.remove('active');
+    setTimeout(() => {
+      aboutModal.style.display = 'none';
+    }, 300);
+  }
+});
+    
+    // Initialiser l'application au chargement
+    document.addEventListener('DOMContentLoaded', () => {
+      // Sélectionner le tri par défaut
+      document.getElementById('sortByDateBtn').classList.add('active');
+
+      // Démarrer l'application
+      initApp();
+    });
+  </script>
+</body>
 </html>
-
