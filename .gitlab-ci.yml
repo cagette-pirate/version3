@@ -3,15 +3,22 @@ image: busybox
 pages:
   stage: deploy
   script:
-    # Remplacez les variables dans le fichier HTML
-    - sed -i "s/FIREBASE_API_KEY_PLACEHOLDER/$FIREBASE_API_KEY/g" public/index.html
-    - sed -i "s/FIREBASE_AUTH_DOMAIN_PLACEHOLDER/$FIREBASE_AUTH_DOMAIN/g" public/index.html
-    - sed -i "s|FIREBASE_DATABASE_URL_PLACEHOLDER|$FIREBASE_DATABASE_URL|g" public/index.html
-    - sed -i "s/FIREBASE_PROJECT_ID_PLACEHOLDER/$FIREBASE_PROJECT_ID/g" public/index.html
-    - sed -i "s/FIREBASE_STORAGE_BUCKET_PLACEHOLDER/$FIREBASE_STORAGE_BUCKET/g" public/index.html
-    - sed -i "s/FIREBASE_MESSAGING_SENDER_ID_PLACEHOLDER/$FIREBASE_MESSAGING_SENDER_ID/g" public/index.html
-    - sed -i "s/FIREBASE_APP_ID_PLACEHOLDER/$FIREBASE_APP_ID/g" public/index.html
-    - sed -i "s/FIREBASE_MEASUREMENT_ID_PLACEHOLDER/$FIREBASE_MEASUREMENT_ID/g" public/index.html
+    # Créer un fichier de configuration Firebase
+    - echo "// Configuration Firebase" > public/firebase-config.js
+    - echo "const firebaseConfig = {" >> public/firebase-config.js
+    - echo "  apiKey: \"$FIREBASE_API_KEY\"," >> public/firebase-config.js
+    - echo "  authDomain: \"$FIREBASE_AUTH_DOMAIN\"," >> public/firebase-config.js
+    - echo "  databaseURL: \"$FIREBASE_DATABASE_URL\"," >> public/firebase-config.js
+    - echo "  projectId: \"$FIREBASE_PROJECT_ID\"," >> public/firebase-config.js
+    - echo "  storageBucket: \"$FIREBASE_STORAGE_BUCKET\"," >> public/firebase-config.js
+    - echo "  messagingSenderId: \"$FIREBASE_MESSAGING_SENDER_ID\"," >> public/firebase-config.js
+    - echo "  appId: \"$FIREBASE_APP_ID\"," >> public/firebase-config.js
+    - echo "  measurementId: \"$FIREBASE_MEASUREMENT_ID\"" >> public/firebase-config.js
+    - echo "};" >> public/firebase-config.js
+    
+    # Modifier le HTML pour charger le fichier de configuration externe
+    - 'sed -i "s|// Configuration Firebase|// Configuration Firebase chargée depuis un fichier externe|g" public/index.html'
+    - 'sed -i "/const firebaseConfig = {/,/};/c\\<script src=\"firebase-config.js\"></script>" public/index.html'
   artifacts:
     paths:
       - public
