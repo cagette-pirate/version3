@@ -3,18 +3,27 @@ image: busybox
 pages:
   stage: deploy
   script:
-    # Remplacez les variables dans le fichier HTML
-    - sed -i "s/FIREBASE_API_KEY_PLACEHOLDER/$FIREBASE_API_KEY/g" public/index.html
-    - sed -i "s/FIREBASE_AUTH_DOMAIN_PLACEHOLDER/$FIREBASE_AUTH_DOMAIN/g" public/index.html
-    - sed -i "s|FIREBASE_DATABASE_URL_PLACEHOLDER|$FIREBASE_DATABASE_URL|g" public/index.html
-    - sed -i "s/FIREBASE_PROJECT_ID_PLACEHOLDER/$FIREBASE_PROJECT_ID/g" public/index.html
-    - sed -i "s/FIREBASE_STORAGE_BUCKET_PLACEHOLDER/$FIREBASE_STORAGE_BUCKET/g" public/index.html
-    - sed -i "s/FIREBASE_MESSAGING_SENDER_ID_PLACEHOLDER/$FIREBASE_MESSAGING_SENDER_ID/g" public/index.html
-    - sed -i "s/FIREBASE_APP_ID_PLACEHOLDER/$FIREBASE_APP_ID/g" public/index.html
-    - sed -i "s/FIREBASE_MEASUREMENT_ID_PLACEHOLDER/$FIREBASE_MEASUREMENT_ID/g" public/index.html
+    # Copier le fichier firebase-init.js vers le dossier public
+    - cp firebase-init.js public/
+    
+    # Remplacer les placeholders par les variables d'environnement
+    - sed -i "s/FIREBASE_API_KEY_PLACEHOLDER/$FIREBASE_API_KEY/g" public/firebase-init.js
+    - sed -i "s/FIREBASE_AUTH_DOMAIN_PLACEHOLDER/$FIREBASE_AUTH_DOMAIN/g" public/firebase-init.js
+    - sed -i "s|FIREBASE_DATABASE_URL_PLACEHOLDER|$FIREBASE_DATABASE_URL|g" public/firebase-init.js
+    - sed -i "s/FIREBASE_PROJECT_ID_PLACEHOLDER/$FIREBASE_PROJECT_ID/g" public/firebase-init.js
+    - sed -i "s/FIREBASE_STORAGE_BUCKET_PLACEHOLDER/$FIREBASE_STORAGE_BUCKET/g" public/firebase-init.js
+    - sed -i "s/FIREBASE_MESSAGING_SENDER_ID_PLACEHOLDER/$FIREBASE_MESSAGING_SENDER_ID/g" public/firebase-init.js
+    - sed -i "s/FIREBASE_APP_ID_PLACEHOLDER/$FIREBASE_APP_ID/g" public/firebase-init.js
+    - sed -i "s/FIREBASE_MEASUREMENT_ID_PLACEHOLDER/$FIREBASE_MEASUREMENT_ID/g" public/firebase-init.js
+    
+    # Vérification (optionnelle, pour le débogage)
+    - echo "Vérification du remplacement (masqué pour sécurité)"
+    - grep -o "apiKey: \"[^\"]*\"" public/firebase-init.js | sed "s/apiKey: \".*\"/apiKey: \"***\"/g"
+  
   artifacts:
     paths:
       - public
     expire_in: 1 day
+  
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
