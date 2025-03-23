@@ -759,6 +759,45 @@
   margin-right: var(--spacing-sm);
 }
 
+/* Style pour les placeholders d'image */
+.no-image-container {
+  position: relative;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-placeholder {
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+  font-size: var(--font-size-large);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-placeholder-modal {
+  background-color: #000;
+  color: #fff;
+  padding: 40px 20px;
+  text-align: center;
+  font-size: var(--font-size-xlarge);
+  font-weight: bold;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
 /* Styles pour le modal À propos */
 .about-modal .modal-content {
   max-width: 700px;
