@@ -149,52 +149,54 @@
     </div>
   </div>
   
-  <!-- Modal -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title"></h2>
-        <span class="close">&times;</span>
+ <!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title"></h2>
+      <span class="close">&times;</span>
+    </div>
+    <img class="modal-image" alt="">
+    <!-- Le div ci-dessous sera ajouté dynamiquement en JavaScript quand il n'y a pas d'image -->
+    <!-- <div class="title-placeholder-modal"></div> -->
+    <div class="modal-body">
+      <div class="modal-meta">
+        <div class="modal-author"></div>
+        <div class="modal-date">
+          <i class="far fa-calendar-alt"></i>
+          <span></span>
+        </div>
       </div>
-      <img class="modal-image" alt="">
-      <div class="modal-body">
-        <div class="modal-meta">
-          <div class="modal-author"></div>
-          <div class="modal-date">
-            <i class="far fa-calendar-alt"></i>
-            <span></span>
-          </div>
+      <div class="modal-tags"></div>
+      <div class="modal-description"></div>
+      <div class="num-annonce"></div>
+      
+      <div class="modal-actions">
+        <div class="modal-action-buttons">
+          <button class="modal-action-button modal-like-button">
+            <i class="far fa-heart"></i> J'aime
+          </button>
         </div>
-        <div class="modal-tags"></div>
-        <div class="modal-description"></div>
-        <div class="num-annonce"></div>
-        
-        <div class="modal-actions">
-          <div class="modal-action-buttons">
-            <button class="modal-action-button modal-like-button">
-              <i class="far fa-heart"></i> J'aime
-            </button>
-          </div>
-          <div class="views-display">
-            <i class="fas fa-eye"></i>
-            <span class="views-count">0</span> vues
-          </div>
+        <div class="views-display">
+          <i class="fas fa-eye"></i>
+          <span class="views-count">0</span> vues
         </div>
-        
-        <!-- Section commentaires -->
-        <div class="comments-section">
-          <h3>Commentaires</h3>
-          <div class="comment-form">
-            <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
-            <button id="submitComment">Envoyer</button>
-          </div>
-          <div class="comments-list" id="commentsList">
-            <!-- Commentaires générés dynamiquement -->
-          </div>
+      </div>
+      
+      <!-- Section commentaires -->
+      <div class="comments-section">
+        <h3>Commentaires</h3>
+        <div class="comment-form">
+          <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
+          <button id="submitComment">Envoyer</button>
+        </div>
+        <div class="comments-list" id="commentsList">
+          <!-- Commentaires générés dynamiquement -->
         </div>
       </div>
     </div>
   </div>
+</div>
   
   <!-- Container pour les toasts -->
   <div class="toast-container">
