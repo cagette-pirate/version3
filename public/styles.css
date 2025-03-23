@@ -759,6 +759,37 @@
   margin-right: var(--spacing-sm);
 }
 
+/* Styles pour la section Signaler une annonce */
+.report-section {
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.report-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: var(--background);
+  color: #E53935; /* Rouge pour attirer l'attention sur le signalement */
+  border: 1px solid #E53935;
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-md);
+  font-size: var(--font-size-regular);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.report-button:hover {
+  background-color: rgba(229, 57, 53, 0.1);
+  transform: translateY(-2px);
+}
+
+.report-button i {
+  margin-right: var(--spacing-sm);
+}
+
 /* Style pour les placeholders d'image */
 .no-image-container {
   position: relative;
