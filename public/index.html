@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MMLSJFZTMN"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MMLSJFZTMN');
+  </script>
+
+  <!-- Firebase SDK - DOIT ÊTRE CHARGÉ EN PREMIER -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+  <!-- PUIS votre configuration Firebase -->
+  <script src="firebase-init.js"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
+  <!-- Votre fichier CSS -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <title>Annonces de La Cagette Pirate</title>
+</head>
+<body>
+  <!-- Header du site avec logo ajouté -->
+  <header class="site-header">
+    <div class="header-content">
+      <img src="https://lacagette-coop.fr/files/CagettePirate_logo_pirate_longpng_20241004204418_20241004204514.png" alt="Logo La Cagette Pirate" class="header-logo">
+      <div class="header-text">
+        <h1>Annonces de La Cagette Pirate</h1>
+        <p>Découvrez les événements et informations partagés par les membres</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Barre latérale -->
+    <div class="sidebar">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Rechercher une annonce...">
+      </div>
+      
+      <!-- Sélecteurs de catégories -->
+      <div class="filter-section">
+        <h3>Catégories</h3>
+        <div class="filter-options">
+          <button class="tag-filter active" data-tag="alaune">Annonces à la une</button>
+          <button class="tag-filter" data-tag="1">Événement</button>
+          <button class="tag-filter" data-tag="2">Point de vue / Tribune</button>
+          <button class="tag-filter" data-tag="3">Recette de cuisine</button>
+          <button class="tag-filter" data-tag="4">Autre info</button>
+        </div>
+      </div>
+      
+      <!-- Filtre par date -->
+      <div class="date-filter">
+        <h3>Période</h3>
+        <select id="dateFilter">
+          <option value="all">Toutes les périodes</option>
+          <option value="month">Dernier mois</option>
+          <option value="3months" selected>3 derniers mois</option>
+          <option value="6months">6 derniers mois</option>
+          <option value="year">Dernière année</option>
+        </select>
+      </div>
+      
+      <!-- Séparateur et lien de soumission -->
+      <div class="separator"></div>
+      <div class="submit-annonce">
+        <a href="https://lacagette-coop.fr/?CagettePirateForm" target="_blank">Soumettre une annonce</a>
+      </div>
+      <div class="separator"></div>
+      
+      <!-- Boutons de tri stylisés -->
+      <div class="sort-section">
+        <h3>Trier par</h3>
+        <div class="sort-bar">
+          <button class="sort-button" id="sortByRandomBtn"><i class="fas fa-random"></i> Tri au hasard</button>
+          <button class="sort-button active" id="sortByDateBtn"><i class="fas fa-calendar-alt"></i> Date</button>
+          <button class="sort-button" id="sortByViewsBtn"><i class="fas fa-eye"></i> Vues</button>
+          <button class="sort-button" id="sortByLikesBtn"><i class="fas fa-heart"></i> Likes</button>
+        </div>
+      </div>
+      
+      <!-- Lien À propos à ajouter dans la sidebar -->
+      <div class="separator"></div>
+      <div class="about-section">
+        <button id="aboutButton" class="about-button">
+          <i class="fas fa-info-circle"></i> À propos de la Cagette Pirate
+        </button>
+      </div>
+    </div>
+    
+    <!-- Contenu principal -->
+    <div class="main-content">
+      <div class="annonces-count">Affichage de <span id="countAnnonces">0</span> annonces</div>
+      <div class="spinner" id="spinner"></div>
+      <div class="annonces-container" id="annoncesContainer"></div>
+      
+      <!-- Pagination -->
+      <div class="pagination" id="pagination">
+        <!-- Généré dynamiquement par JS -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bouton Menu Mobile -->
+  <div class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <!-- Modal À propos -->
+  <div id="aboutModal" class="modal about-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">À propos de la Cagette Pirate</h2>
+        <span class="close" id="closeAboutModal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="about-text">
+          <h3 class="about-title">Qui sommes-nous ?</h3>
+          <p>
+            La Cagette Pirate est une initiative collective de membres de La Cagette, supermarché coopératif et participatif de Montpellier. Nous portons cet espace d'échange et de partage d'informations au sein de notre communauté de coopérateur.ices.
+          </p>
+          <p>
+            La Cagette Pirate est portée par Grégori Akermann, Anna Buy, Elie Daviron, Catherine Gustau, Antonin Molino, en lien étroit avec le Comité Communication de la Cagette.
+          </p>
+          
+          <h3 class="about-title">Notre ambition</h3>
+          <p>
+            Nous souhaitons créer un espace d'expression libre permettant aux coopérateur.ices de partager des événements, des opinions, des recettes ou tout autres informations pertinentes pour les membres.
+          </p>
+          
+          <h3 class="about-title">Comment participer ?</h3>
+          <p>
+            Tous les membres de La Cagette peuvent soumettre une annonce en utilisant le formulaire disponible sur le site. Les contributions sont modérées par un collectif bénévole pour garantir le respect de notre charte.
+          </p>
+          
+          <p>
+            <em>Note : La Cagette Pirate est une initiative indépendante et n'engage pas officiellement La Cagette, supermarché coopératif et participatif de Montpellier.</em>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"></h2>
+        <span class="close">&times;</span>
+      </div>
+      <img class="modal-image" alt="">
+      <div class="modal-body">
+        <div class="modal-meta">
+          <div class="modal-author"></div>
+          <div class="modal-date">
+            <i class="far fa-calendar-alt"></i>
+            <span></span>
+          </div>
+        </div>
+        <div class="modal-tags"></div>
+        <div class="modal-description"></div>
+        <div class="num-annonce"></div>
+        
+        <div class="modal-actions">
+          <div class="modal-action-buttons">
+            <button class="modal-action-button modal-like-button">
+              <i class="far fa-heart"></i> J'aime
+            </button>
+          </div>
+          <div class="views-display">
+            <i class="fas fa-eye"></i>
+            <span class="views-count">0</span> vues
+          </div>
+        </div>
+        
+        <!-- Section commentaires -->
+        <div class="comments-section">
+          <h3>Commentaires</h3>
+          <div class="comment-form">
+            <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
+            <button id="submitComment">Envoyer</button>
+          </div>
+          <div class="comments-list" id="commentsList">
+            <!-- Commentaires générés dynamiquement -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Container pour les toasts -->
+  <div class="toast-container">
+    <div id="toast" class="toast"></div>
+  </div>
+  
+  <!-- Votre fichier JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
