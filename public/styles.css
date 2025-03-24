@@ -86,35 +86,6 @@
   color: var(--text-secondary);
 }
 
-/* Media queries pour rendre le header responsive */
-@media (min-width: 768px) {
-  .header-content {
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .header-logo {
-    margin-right: var(--spacing-lg);
-    margin-bottom: 0;
-  }
-  
-  .header-text {
-    text-align: left;
-  }
-}
-
-@media (max-width: 768px) {
-  .header-logo {
-    max-width: 250px;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-logo {
-    max-width: 200px;
-  }
-}
     /* Disposition globale */
     .container {
       display: flex;
