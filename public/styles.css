@@ -289,12 +289,29 @@
     }
     
     /* Affichage des annonces */
-    .annonces-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: var(--spacing-lg);
-      transition: opacity var(--transition-normal);
-    }
+/* Modifications pour .annonces-container */
+
+/* Version desktop - utiliser repeat(3, 1fr) au lieu de auto-fill/minmax */
+.annonces-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  transition: opacity var(--transition-normal);
+}
+
+/* À 992px, passer à 2 colonnes */
+@media (max-width: 992px) {
+  .annonces-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* À 768px, passer à 1 colonne */
+@media (max-width: 768px) {
+  .annonces-container {
+    grid-template-columns: 1fr;
+  }
+}
     
     .annonce {
       background-color: var(--card-bg);
