@@ -140,7 +140,7 @@ function filterAnnonces() {
     const matchesSearch = 
       entry.bf_titre.toLowerCase().includes(searchTerm) || 
       entry.bf_description.toLowerCase().includes(searchTerm) || 
-      entry.bf_description2.toLowerCase().includes(searchTerm);
+      entry.bf_description1.toLowerCase().includes(searchTerm);
     
     return matchesCategory && isRecentEnough && matchesSearch;
   });
@@ -214,6 +214,8 @@ function displayAnnonces() {
 
 // Créer une carte d'annonce
 // FONCTION MODIFIÉE POUR AFFICHER LE TITRE QUAND IL N'Y A PAS D'IMAGE
+// Fonction createAnnonceCard modifiée pour prendre en compte les pseudo
+// Fonction createAnnonceCard modifiée
 function createAnnonceCard(entry) {
   const annonceDiv = document.createElement('div');
   annonceDiv.classList.add('annonce');
@@ -250,7 +252,10 @@ function createAnnonceCard(entry) {
   const likedAnnonces = JSON.parse(localStorage.getItem('likedAnnonces')) || {};
   const isLiked = likedAnnonces[entry.id_fiche];
   
-  // Créer le HTML pour la carte - PARTIE MODIFIÉE
+  // Déterminer l'auteur - PARTIE MODIFIÉE
+  const author = entry.bf_pseudo ? entry.bf_pseudo : (entry.bf_description2 || 'Anonyme') + ' ' + (entry.bf_description1 || '');
+  
+  // Créer le HTML pour la carte
   annonceDiv.innerHTML = `
     <div class="annonce-image ${!entry.fichierbf_file ? 'no-image-container' : ''}">
       ${entry.fichierbf_file 
@@ -263,7 +268,7 @@ function createAnnonceCard(entry) {
         ${tagsArray.map(tag => `<span class="annonce-tag">${tagsMap[tag] || tag}</span>`).join('')}
       </div>
       <h2>${entry.bf_titre}</h2>
-      <p class="author">${entry.bf_description2 || 'Anonyme'} ${entry.bf_description1 || ''}</p>
+      <p class="author">${author}</p>
       <p class="date"><i class="far fa-calendar-alt"></i> ${formattedDate}</p>
       <p class="excerpt">${entry.bf_description.substring(0, 150)}${entry.bf_description.length > 150 ? '...' : ''}</p>
       <div class="interaction-buttons">
@@ -292,7 +297,6 @@ function createAnnonceCard(entry) {
   // Ajouter la carte au conteneur
   annoncesContainer.appendChild(annonceDiv);
 }
-
 // Mettre à jour la pagination
 function updatePagination() {
   const paginationContainer = document.getElementById('pagination');
@@ -414,6 +418,7 @@ function updatePaginationButtons() {
 
 // Ouvrir le modal avec les détails de l'annonce
 // FONCTION MODIFIÉE POUR AFFICHER LE TITRE QUAND IL N'Y A PAS D'IMAGE
+// Fonction openModal modifiée
 function openModal(entry) {
   // Incrémenter le compteur de vues
   increaseViewCount(entry.id_fiche);
@@ -445,12 +450,15 @@ function openModal(entry) {
   const likedAnnonces = JSON.parse(localStorage.getItem('likedAnnonces')) || {};
   const isLiked = likedAnnonces[entry.id_fiche];
   
+  // Déterminer l'auteur - PARTIE MODIFIÉE
+  const author = entry.bf_pseudo ? entry.bf_pseudo : (entry.bf_description2 || 'Anonyme') + ' ' + (entry.bf_description1 || '');
+  
   // Remplir le modal avec les détails
   document.querySelector('.modal-title').textContent = entry.bf_titre;
-  document.querySelector('.modal-author').textContent = `${entry.bf_description2 || 'Anonyme'} ${entry.bf_description1 || ''}`;
+  document.querySelector('.modal-author').textContent = author;
   document.querySelector('.modal-date span').textContent = formattedDate;
   
-  // PARTIE MODIFIÉE - Gestion de l'image ou du placeholder
+  // Gestion de l'image ou du placeholder
   const modalImage = document.querySelector('.modal-image');
   
   // Supprimer le placeholder précédent s'il existe
