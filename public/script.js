@@ -862,13 +862,16 @@ document.getElementById('sortByViewsBtn').addEventListener('click', function() {
       });
     });
 
-	  // Gestion du modal À propos
+// Gestion du modal À propos
 const aboutButton = document.getElementById('aboutButton');
 const aboutModal = document.getElementById('aboutModal');
 const closeAboutModal = document.getElementById('closeAboutModal');
 
 // Ouvrir le modal
 aboutButton.addEventListener('click', () => {
+  // Forcer le titre du modal À propos
+  document.querySelector('#aboutModal .modal-title').textContent = "À propos de la Cagette Pirate";
+  
   aboutModal.style.display = 'block';
   setTimeout(() => {
     aboutModal.classList.add('active');
