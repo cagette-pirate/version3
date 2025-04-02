@@ -867,3 +867,30 @@
     margin: 10% auto;
   }
 }
+
+
+/* Style spécial pour le bouton "Toutes les publications" */
+.tag-filter[data-tag="all"] {
+  margin-top: var(--spacing-sm);
+  background-color: var(--background);
+  border: 1px dashed var(--border);
+  width: 100%; /* Fait prendre toute la largeur disponible */
+}
+
+.tag-filter[data-tag="all"]:hover {
+  background-color: rgba(46, 125, 50, 0.1);
+}
+
+.tag-filter[data-tag="all"].active {
+  background-color: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+}
+
+/* Ajuster la disposition des filtres pour mieux accueillir le nouveau bouton */
+.filter-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
