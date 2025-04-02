@@ -92,7 +92,6 @@ function applySortAndFilters() {
   displayAnnonces();
 }
 
-// Filtrer les annonces
 function filterAnnonces() {
   const searchTerm = document.getElementById('searchInput').value.toLowerCase();
   const now = new Date();
@@ -127,6 +126,9 @@ function filterAnnonces() {
     if (activeCategory === "alaune") {
       // Pour "À la une", chercher les annonces marquées par le comité de rédaction (bf_modo = 10)
       matchesCategory = entry.bf_modo === "10";
+    } else if (activeCategory === "all") {
+      // Pour "Toutes les publications", afficher toutes les annonces modérées
+      matchesCategory = true;
     } else if (activeCategory) {
       // Pour les autres catégories, vérifier les tags normalement
       matchesCategory = tags.includes(activeCategory);
