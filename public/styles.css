@@ -894,3 +894,52 @@
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
 }
+
+/* Styles pour le compteur de commentaires */
+.comments-indicator {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-regular);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.comments-indicator:hover {
+  color: var(--primary);
+}
+
+.comments-indicator i {
+  margin-right: var(--spacing-xs);
+}
+
+.comments-count {
+  font-size: var(--font-size-small);
+}
+
+/* Modifier la disposition du groupe de boutons pour intégrer le compteur de commentaires */
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* Modifier l'en-tête de la section commentaires pour bien afficher le compteur */
+.comments-section h3 {
+  font-size: var(--font-size-large);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+}
+
+/* Animation subtile au survol de l'indicateur de commentaires */
+.comments-indicator:hover i {
+  transform: scale(1.1);
+}
+
+/* Ajustement pour les vues sur mobile */
+@media (max-width: 768px) {
+  .button-group {
+    gap: var(--spacing-sm); /* Réduire l'espace sur mobile */
+  }
+}
