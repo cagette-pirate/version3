@@ -18,9 +18,10 @@ const modal = document.getElementById('modal');
 const mobileMenuToggle = document.getElementById('mobileMenuToggle');
 const sidebar = document.querySelector('.sidebar');
 
-// Cache pour les vues et les likes
+// Cache pour les vues, les likes et les commentaires
 const viewsCache = {};
 const likesCache = {};
+const commentsCountCache = {};
 
 // Initialisation de l'application
 function initApp() {
@@ -73,6 +74,23 @@ function loadAllLikesCounts() {
       // Mettre en cache toutes les valeurs
       Object.keys(likes).forEach(id => {
         likesCache[id] = likes[id];
+      });
+      
+      // Après avoir chargé les likes, charger les compteurs de commentaires
+      return loadAllCommentsCount();
+    });
+}
+
+// Préchargement de tous les compteurs de commentaires
+function loadAllCommentsCount() {
+  const commentsRef = firebase.database().ref('comments');
+  return commentsRef.once('value')
+    .then(snapshot => {
+      const comments = snapshot.val() || {};
+      // Calculer le nombre de commentaires pour chaque annonce
+      Object.keys(comments).forEach(annonceId => {
+        const annonceComments = comments[annonceId] || {};
+        commentsCountCache[annonceId] = Object.keys(annonceComments).length;
       });
     });
 }
@@ -215,9 +233,6 @@ function displayAnnonces() {
 }
 
 // Créer une carte d'annonce
-// FONCTION MODIFIÉE POUR AFFICHER LE TITRE QUAND IL N'Y A PAS D'IMAGE
-// Fonction createAnnonceCard modifiée pour prendre en compte les pseudo
-// Fonction createAnnonceCard modifiée
 function createAnnonceCard(entry) {
   const annonceDiv = document.createElement('div');
   annonceDiv.classList.add('annonce');
@@ -246,15 +261,16 @@ function createAnnonceCard(entry) {
     tagsArray.push("alaune");
   }
   
-  // Obtenir les vues et likes
+  // Obtenir les vues, likes et commentaires
   const views = viewsCache[entry.id_fiche] || 0;
   const likes = likesCache[entry.id_fiche] || 0;
+  const comments = commentsCountCache[entry.id_fiche] || 0;
   
   // Vérifier si l'annonce est likée
   const likedAnnonces = JSON.parse(localStorage.getItem('likedAnnonces')) || {};
   const isLiked = likedAnnonces[entry.id_fiche];
   
-  // Déterminer l'auteur - PARTIE MODIFIÉE
+  // Déterminer l'auteur
   const author = entry.bf_pseudo ? entry.bf_pseudo : (entry.bf_description2 || 'Anonyme') + ' ' + (entry.bf_description1 || '');
   
   // Créer le HTML pour la carte
@@ -279,6 +295,10 @@ function createAnnonceCard(entry) {
             <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
             <span class="likes-count">${likes}</span>
           </button>
+          <div class="comments-indicator" title="${comments} commentaire(s)">
+            <i class="far fa-comment"></i>
+            <span class="comments-count">${comments}</span>
+          </div>
         </div>
         <div class="views-display">
           <i class="fas fa-eye"></i>
@@ -291,6 +311,7 @@ function createAnnonceCard(entry) {
   // Ajouter les écouteurs d'événements
   annonceDiv.querySelector('h2').addEventListener('click', () => openModal(entry));
   annonceDiv.querySelector('.annonce-image').addEventListener('click', () => openModal(entry));
+  annonceDiv.querySelector('.comments-indicator').addEventListener('click', () => openModal(entry));
   
   // Bouton "J'aime"
   const likeButton = annonceDiv.querySelector('.like-button');
@@ -299,6 +320,7 @@ function createAnnonceCard(entry) {
   // Ajouter la carte au conteneur
   annoncesContainer.appendChild(annonceDiv);
 }
+
 // Mettre à jour la pagination
 function updatePagination() {
   const paginationContainer = document.getElementById('pagination');
@@ -419,8 +441,6 @@ function updatePaginationButtons() {
 }
 
 // Ouvrir le modal avec les détails de l'annonce
-// FONCTION MODIFIÉE POUR AFFICHER LE TITRE QUAND IL N'Y A PAS D'IMAGE
-// Fonction openModal modifiée
 function openModal(entry) {
   // Incrémenter le compteur de vues
   increaseViewCount(entry.id_fiche);
@@ -452,7 +472,7 @@ function openModal(entry) {
   const likedAnnonces = JSON.parse(localStorage.getItem('likedAnnonces')) || {};
   const isLiked = likedAnnonces[entry.id_fiche];
   
-  // Déterminer l'auteur - PARTIE MODIFIÉE
+  // Déterminer l'auteur
   const author = entry.bf_pseudo ? entry.bf_pseudo : (entry.bf_description2 || 'Anonyme') + ' ' + (entry.bf_description1 || '');
   
   // Remplir le modal avec les détails
@@ -618,11 +638,26 @@ function updateLikeButtons(annonceId, isLiked) {
   }
 }
 
+// Ajouter une fonction pour mettre à jour le titre du H3 dans la section commentaires
+function updateCommentsTitle(annonceId) {
+  const commentCount = commentsCountCache[annonceId] || 0;
+  const commentsTitle = document.querySelector('.comments-section h3');
+  
+  if (commentsTitle) {
+    commentsTitle.textContent = commentCount > 0 
+      ? `Commentaires (${commentCount})` 
+      : 'Commentaires';
+  }
+}
+
 // Charger les commentaires
 function loadComments(annonceId) {
   const commentsRef = firebase.database().ref('comments/' + annonceId);
   const commentsList = document.getElementById('commentsList');
   commentsList.innerHTML = '';
+  
+  // Mettre à jour le titre avec le nombre de commentaires
+  updateCommentsTitle(annonceId);
   
   commentsRef.orderByChild('timestamp').once('value', snapshot => {
     const comments = snapshot.val();
@@ -633,6 +668,13 @@ function loadComments(annonceId) {
       commentsList.appendChild(noCommentsMessage);
       return;
     }
+    
+    // Mettre à jour le compteur dans le cache
+    const commentCount = Object.keys(comments).length;
+    commentsCountCache[annonceId] = commentCount;
+    
+    // Mettre à jour le titre avec le nombre de commentaires actualisé
+    updateCommentsTitle(annonceId);
     
     // Convertir l'objet en tableau et trier par date
     const commentsArray = Object.values(comments);
@@ -684,6 +726,9 @@ function addComment(annonceId, commentText) {
     .then(() => {
       // Réinitialiser le champ de texte
       document.getElementById('commentInput').value = '';
+      
+      // Mettre à jour le cache
+      commentsCountCache[annonceId] = (commentsCountCache[annonceId] || 0) + 1;
       
       // Recharger les commentaires
       loadComments(annonceId);
@@ -778,91 +823,91 @@ document.getElementById('sortByViewsBtn').addEventListener('click', function() {
   applySortAndFilters();
 });
     
-    // Tri par likes
-    document.getElementById('sortByLikesBtn').addEventListener('click', function() {
-      document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
-      this.classList.add('active');
-      activeSortMethod = 'likes';
-      sortByLikesDesc = !sortByLikesDesc;
-      applySortAndFilters();
-    });
+// Tri par likes
+document.getElementById('sortByLikesBtn').addEventListener('click', function() {
+  document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+  this.classList.add('active');
+  activeSortMethod = 'likes';
+  sortByLikesDesc = !sortByLikesDesc;
+  applySortAndFilters();
+});
     
-    // Fermeture du modal
-    document.querySelector('#modal .close').addEventListener('click', closeModal);
-    window.addEventListener('click', (event) => {
-      if (event.target == modal) closeModal();
-    });
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && modal.style.display === 'block') closeModal();
-    });
+// Fermeture du modal
+document.querySelector('#modal .close').addEventListener('click', closeModal);
+window.addEventListener('click', (event) => {
+  if (event.target == modal) closeModal();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && modal.style.display === 'block') closeModal();
+});
     
-    // Toggle menu mobile
-    mobileMenuToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('active');
-    });
+// Toggle menu mobile
+mobileMenuToggle.addEventListener('click', () => {
+  sidebar.classList.toggle('active');
+});
     
-    // Fonction debounce pour éviter trop d'appels pendant la frappe
-    function debounce(func, wait) {
-      let timeout;
-      return function() {
-        const context = this;
-        const args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(function() {
-          func.apply(context, args);
-        }, wait);
-      };
-    }
+// Fonction debounce pour éviter trop d'appels pendant la frappe
+function debounce(func, wait) {
+  let timeout;
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeout);
+    timeout = setTimeout(function() {
+      func.apply(context, args);
+    }, wait);
+  };
+}
     
-    // Vérification des changements de taille de la fenêtre
-    window.addEventListener('resize', debounce(function() {
-      // Adapter la pagination en fonction de la taille de l'écran
-      if (window.innerWidth < 768) {
-        itemsPerPage = 4;
-      } else {
-        itemsPerPage = 8;
-      }
-      updatePagination();
-      displayAnnonces();
-    }, 200));
+// Vérification des changements de taille de la fenêtre
+window.addEventListener('resize', debounce(function() {
+  // Adapter la pagination en fonction de la taille de l'écran
+  if (window.innerWidth < 768) {
+    itemsPerPage = 4;
+  } else {
+    itemsPerPage = 8;
+  }
+  updatePagination();
+  displayAnnonces();
+}, 200));
     
-    // Lazy loading des images avec Intersection Observer
-    let lazyImageObserver;
-    function setupLazyLoading() {
-      if ('IntersectionObserver' in window) {
-        lazyImageObserver = new IntersectionObserver(function(entries, observer) {
-          entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-              const lazyImage = entry.target;
-              lazyImage.src = lazyImage.dataset.src;
-              lazyImage.classList.remove('lazy');
-              lazyImageObserver.unobserve(lazyImage);
-            }
-          });
-        });
-        
-        document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
-          lazyImageObserver.observe(lazyImage);
-        });
-      } else {
-        // Fallback pour les navigateurs qui ne supportent pas Intersection Observer
-        document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
+// Lazy loading des images avec Intersection Observer
+let lazyImageObserver;
+function setupLazyLoading() {
+  if ('IntersectionObserver' in window) {
+    lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          const lazyImage = entry.target;
           lazyImage.src = lazyImage.dataset.src;
           lazyImage.classList.remove('lazy');
-        });
-      }
-    }
-    
-    // Cacher automatiquement la sidebar sur mobile lors du clic sur un filtre
-    document.querySelectorAll('.sidebar button').forEach(button => {
-      button.addEventListener('click', () => {
-        if (window.innerWidth < 600) {
-          setTimeout(() => {
-            sidebar.classList.remove('active');
-          }, 300);
+          lazyImageObserver.unobserve(lazyImage);
         }
       });
     });
+        
+    document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
+      lazyImageObserver.observe(lazyImage);
+    });
+  } else {
+    // Fallback pour les navigateurs qui ne supportent pas Intersection Observer
+    document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
+      lazyImage.src = lazyImage.dataset.src;
+      lazyImage.classList.remove('lazy');
+    });
+  }
+}
+    
+// Cacher automatiquement la sidebar sur mobile lors du clic sur un filtre
+document.querySelectorAll('.sidebar button').forEach(button => {
+  button.addEventListener('click', () => {
+    if (window.innerWidth < 600) {
+      setTimeout(() => {
+        sidebar.classList.remove('active');
+      }, 300);
+    }
+  });
+});
 
 // Gestion du modal À propos
 const aboutButton = document.getElementById('aboutButton');
@@ -898,11 +943,11 @@ window.addEventListener('click', (event) => {
   }
 });
     
-    // Initialiser l'application au chargement
-    document.addEventListener('DOMContentLoaded', () => {
-      // Sélectionner le tri par défaut
-      document.getElementById('sortByDateBtn').classList.add('active');
+// Initialiser l'application au chargement
+document.addEventListener('DOMContentLoaded', () => {
+  // Sélectionner le tri par défaut
+  document.getElementById('sortByDateBtn').classList.add('active');
 
-      // Démarrer l'application
-      initApp();
-    });
+  // Démarrer l'application
+  initApp();
+});
