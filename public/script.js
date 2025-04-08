@@ -120,70 +120,126 @@ function checkAdminStatus() {
   }
 }
 
-// Fonction pour afficher le formulaire de connexion admin
+// Fonction simplifiée pour la connexion admin
 function showAdminLoginForm() {
-  // Créer le modal de connexion s'il n'existe pas déjà
-  if (!document.getElementById('adminLoginModal')) {
-    const adminLoginHTML = `
-      <div id="adminLoginModal" class="modal admin-login-modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2 class="modal-title">Connexion administrateur</h2>
-            <span class="close" id="closeAdminLoginModal">&times;</span>
-          </div>
-          <div class="modal-body">
-            <form id="adminLoginForm">
-              <div class="form-group">
-                <label for="adminPassword">Mot de passe</label>
-                <input type="password" id="adminPassword" required>
-              </div>
-              <button type="submit" class="admin-login-button">Se connecter</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    const modalContainer = document.createElement('div');
-    modalContainer.innerHTML = adminLoginHTML;
-    document.body.appendChild(modalContainer.firstChild);
-    
-    // Ajouter les écouteurs d'événements
-    document.getElementById('closeAdminLoginModal').addEventListener('click', () => {
-      const modal = document.getElementById('adminLoginModal');
-      modal.classList.remove('active');
-      setTimeout(() => { modal.style.display = 'none'; }, 300);
-    });
-    
-    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const password = document.getElementById('adminPassword').value;
-      
-      // Mot de passe simple pour l'exemple - CHANGEZ CECI en production!
-      if (password === 'cagetteadmin2024') {
-        localStorage.setItem('cagettePirateAdmin', 'true');
-        
-        // Fermer le modal
-        const modal = document.getElementById('adminLoginModal');
-        modal.classList.remove('active');
-        setTimeout(() => { 
-          modal.style.display = 'none';
-          // Recharger la page pour activer l'interface admin
-          window.location.reload();
-        }, 300);
-      } else {
-        showToast("Mot de passe incorrect", "error");
-      }
-    });
-  }
+  // Utiliser prompt natif du navigateur au lieu d'un modal personnalisé
+  const password = prompt("Entrez le mot de passe administrateur:");
   
-  // Afficher le modal
-  const adminLoginModal = document.getElementById('adminLoginModal');
-  adminLoginModal.style.display = 'block';
-  setTimeout(() => {
-    adminLoginModal.classList.add('active');
-    document.getElementById('adminPassword').focus();
-  }, 10);
+  if (password === "cagetteadmin2024") {  // Remplacez par votre mot de passe sécurisé
+    localStorage.setItem('cagettePirateAdmin', 'true');
+    alert("Connexion réussie! La page va être rechargée pour activer le mode administrateur.");
+    window.location.reload();
+  } else if (password !== null) {  // Si l'utilisateur a saisi quelque chose (pas annulé)
+    alert("Mot de passe incorrect.");
+  }
+}
+
+// Fonction pour ajouter le bouton Admin
+function addAdminLink() {
+  const reportSection = document.querySelector('.report-section');
+  if (reportSection) {
+    const separator = document.createElement('div');
+    separator.className = 'separator';
+    reportSection.after(separator);
+    
+    const adminSection = document.createElement('div');
+    adminSection.className = 'admin-section';
+    adminSection.style.marginBottom = '20px';
+    adminSection.style.textAlign = 'center';
+    
+    const adminButton = document.createElement('button');
+    adminButton.textContent = "Administration";
+    adminButton.style.padding = '10px';
+    adminButton.style.backgroundColor = '#34495e';
+    adminButton.style.color = 'white';
+    adminButton.style.border = 'none';
+    adminButton.style.borderRadius = '4px';
+    adminButton.style.width = '100%';
+    adminButton.style.cursor = 'pointer';
+    adminButton.addEventListener('click', showAdminLoginForm);
+    
+    adminSection.appendChild(adminButton);
+    separator.after(adminSection);
+  }
+}
+
+// Fonction pour vérifier le statut admin
+function checkAdminStatus() {
+  if (localStorage.getItem('cagettePirateAdmin') === 'true') {
+    // Définir la variable globale
+    window.isAdmin = true;
+    
+    // Ajouter un badge administrateur
+    const adminBadge = document.createElement('div');
+    adminBadge.style.position = 'fixed';
+    adminBadge.style.top = '20px';
+    adminBadge.style.right = '20px';
+    adminBadge.style.backgroundColor = '#c0392b';
+    adminBadge.style.color = 'white';
+    adminBadge.style.padding = '10px 15px';
+    adminBadge.style.borderRadius = '20px';
+    adminBadge.style.zIndex = '1000';
+    adminBadge.style.display = 'flex';
+    adminBadge.style.alignItems = 'center';
+    adminBadge.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+    
+    // Texte du badge
+    const badgeText = document.createElement('span');
+    badgeText.textContent = "Mode Admin";
+    adminBadge.appendChild(badgeText);
+    
+    // Bouton de déconnexion
+    const logoutBtn = document.createElement('button');
+    logoutBtn.innerHTML = "×";
+    logoutBtn.style.marginLeft = '10px';
+    logoutBtn.style.background = 'none';
+    logoutBtn.style.border = 'none';
+    logoutBtn.style.color = 'white';
+    logoutBtn.style.fontSize = '20px';
+    logoutBtn.style.cursor = 'pointer';
+    logoutBtn.style.padding = '0 5px';
+    
+    logoutBtn.addEventListener('click', function() {
+      localStorage.removeItem('cagettePirateAdmin');
+      window.location.reload();
+    });
+    
+    adminBadge.appendChild(logoutBtn);
+    document.body.appendChild(adminBadge);
+    
+    // Afficher un message
+    alert("Mode administrateur activé. Vous pouvez maintenant supprimer les commentaires.");
+  }
+}
+
+// Fonction pour supprimer un commentaire
+function deleteComment(annonceId, commentId) {
+  if (confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?")) {
+    const commentRef = firebase.database().ref(`comments/${annonceId}/${commentId}`);
+    
+    commentRef.remove()
+      .then(() => {
+        // Mettre à jour le cache du nombre de commentaires
+        if (commentsCountCache[annonceId] > 0) {
+          commentsCountCache[annonceId]--;
+        }
+        
+        // Recharger les commentaires
+        loadComments(annonceId);
+        
+        // Mettre à jour les compteurs sur la page principale
+        const commentCountElement = document.querySelector(`.annonce[data-id="${annonceId}"] .comments-count`);
+        if (commentCountElement) {
+          commentCountElement.textContent = commentsCountCache[annonceId] || 0;
+        }
+        
+        alert("Commentaire supprimé avec succès!");
+      })
+      .catch(error => {
+        console.error("Erreur lors de la suppression:", error);
+        alert("Erreur lors de la suppression: " + error.message);
+      });
+  }
 }
 
 // Fonction pour ajouter le bouton Admin dans la sidebar
@@ -839,6 +895,18 @@ function updateCommentsTitle(annonceId) {
   }
 }
 
+// Ajouter une fonction pour mettre à jour le titre du H3 dans la section commentaires
+function updateCommentsTitle(annonceId) {
+  const commentCount = commentsCountCache[annonceId] || 0;
+  const commentsTitle = document.querySelector('.comments-section h3');
+  
+  if (commentsTitle) {
+    commentsTitle.textContent = commentCount > 0 
+      ? `Commentaires (${commentCount})`
+      : 'Commentaires';
+  }
+}
+
 // Charger les commentaires
 function loadComments(annonceId) {
   const commentsRef = firebase.database().ref('comments/' + annonceId);
@@ -870,10 +938,84 @@ function loadComments(annonceId) {
     commentsArray.sort((a, b) => b.timestamp - a.timestamp);
     
     commentsArray.forEach(comment => {
-      const commentElement = createCommentElement(comment, annonceId);
+      const commentElement = document.createElement('div');
+      commentElement.className = 'comment';
+      
+      // Formater la date du commentaire
+      const commentDate = new Date(comment.timestamp);
+      const formattedDate = commentDate.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      // Créer le HTML du commentaire
+      let commentHTML = `
+        <div class="comment-header">
+          <span class="comment-author">${comment.author || 'Anonyme'}</span>
+          <span class="comment-date">${formattedDate}</span>
+        </div>
+        <div class="comment-content">${comment.text}</div>
+      `;
+      
+      // Ajouter le bouton de suppression si mode admin
+      if (window.isAdmin) {
+        commentHTML += `
+          <div class="comment-admin-actions" style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #e0e0e0;">
+            <button class="delete-comment-btn" style="background: none; border: 1px solid #c0392b; color: #c0392b; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+              <i class="fas fa-trash"></i> Supprimer
+            </button>
+          </div>
+        `;
+      }
+      
+      commentElement.innerHTML = commentHTML;
+      
+      // Ajouter l'écouteur pour le bouton de suppression (si admin)
+      if (window.isAdmin) {
+        const deleteBtn = commentElement.querySelector('.delete-comment-btn');
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', function() {
+            if (confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?")) {
+              deleteComment(annonceId, comment.id);
+            }
+          });
+        }
+      }
+      
       commentsList.appendChild(commentElement);
     });
   });
+}
+
+// Fonction pour supprimer un commentaire
+function deleteComment(annonceId, commentId) {
+  const commentRef = firebase.database().ref(`comments/${annonceId}/${commentId}`);
+  
+  commentRef.remove()
+    .then(() => {
+      // Mettre à jour le cache du nombre de commentaires
+      if (commentsCountCache[annonceId] > 0) {
+        commentsCountCache[annonceId]--;
+      }
+      
+      // Recharger les commentaires
+      loadComments(annonceId);
+      
+      // Mettre à jour les compteurs sur la page principale
+      const commentCountElement = document.querySelector(`.annonce[data-id="${annonceId}"] .comments-count`);
+      if (commentCountElement) {
+        commentCountElement.textContent = commentsCountCache[annonceId] || 0;
+      }
+      
+      alert("Commentaire supprimé avec succès!");
+    })
+    .catch(error => {
+      console.error("Erreur lors de la suppression:", error);
+      alert("Erreur lors de la suppression: " + error.message);
+    });
 }
 
 // Ajouter un commentaire
