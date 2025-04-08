@@ -125,7 +125,7 @@ function showAdminLoginForm() {
   // Utiliser prompt natif du navigateur au lieu d'un modal personnalisé
   const password = prompt("Entrez le mot de passe administrateur:");
   
-  if (password === "cagetteadmin2024") {  // Remplacez par votre mot de passe sécurisé
+  if (password === "adminpirate") {  // Remplacez par votre mot de passe sécurisé
     localStorage.setItem('cagettePirateAdmin', 'true');
     alert("Connexion réussie! La page va être rechargée pour activer le mode administrateur.");
     window.location.reload();
