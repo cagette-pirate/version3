@@ -912,3 +912,219 @@ function addComment(annonceId, commentText) {
 }
 
 // Fonctions utilitaires
+
+// Afficher le spinner
+function showSpinner() {
+  spinner.style.display = 'block';
+}
+
+// Cacher le spinner
+function hideSpinner() {
+  spinner.style.display = 'none';
+}
+
+// Afficher un toast
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast';
+  
+  // Ajouter une classe selon le type de message
+  if (type === 'error') {
+    toast.classList.add('error');
+  } else if (type === 'info') {
+    toast.classList.add('info');
+  } else {
+    toast.classList.add('success');
+  }
+  
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// Mise en place des écouteurs d'événements
+
+// Filtres de catégories
+document.querySelectorAll('.tag-filter').forEach(button => {
+  button.addEventListener('click', () => {
+    document.querySelectorAll('.tag-filter').forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    activeCategory = button.getAttribute('data-tag');
+    applySortAndFilters();
+  });
+});
+
+// Filtre de date
+document.getElementById('dateFilter').addEventListener('change', function() {
+  activeDateFilter = this.value;
+  applySortAndFilters();
+});
+
+// Recherche
+document.getElementById('searchInput').addEventListener('input', debounce(function() {
+  applySortAndFilters();
+}, 300));
+
+// Tri au hasard
+document.getElementById('sortByRandomBtn').addEventListener('click', function() {
+  document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+  this.classList.add('active');
+  activeSortMethod = 'random';
+  applySortAndFilters();
+});
+
+// Tri par date
+document.getElementById('sortByDateBtn').addEventListener('click', function() {
+  document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+  this.classList.add('active');
+  activeSortMethod = 'date';
+  sortByDateDesc = !sortByDateDesc;
+  applySortAndFilters();
+});
+
+// Tri par vues
+document.getElementById('sortByViewsBtn').addEventListener('click', function() {
+  document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+  this.classList.add('active');
+  activeSortMethod = 'views';
+  sortByViewsDesc = !sortByViewsDesc;
+  applySortAndFilters();
+});
+    
+// Tri par likes
+document.getElementById('sortByLikesBtn').addEventListener('click', function() {
+  document.querySelectorAll('.sort-button').forEach(btn => btn.classList.remove('active'));
+  this.classList.add('active');
+  activeSortMethod = 'likes';
+  sortByLikesDesc = !sortByLikesDesc;
+  applySortAndFilters();
+});
+    
+// Fermeture du modal
+document.querySelector('#modal .close').addEventListener('click', closeModal);
+window.addEventListener('click', (event) => {
+  if (event.target == modal) closeModal();
+});
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && modal.style.display === 'block') closeModal();
+});
+    
+// Toggle menu mobile
+mobileMenuToggle.addEventListener('click', () => {
+  sidebar.classList.toggle('active');
+});
+    
+// Fonction debounce pour éviter trop d'appels pendant la frappe
+function debounce(func, wait) {
+  let timeout;
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeout);
+    timeout = setTimeout(function() {
+      func.apply(context, args);
+    }, wait);
+  };
+}
+    
+// Vérification des changements de taille de la fenêtre
+window.addEventListener('resize', debounce(function() {
+  // Adapter la pagination en fonction de la taille de l'écran
+  if (window.innerWidth < 768) {
+    itemsPerPage = 4;
+  } else {
+    itemsPerPage = 8;
+  }
+  updatePagination();
+  displayAnnonces();
+}, 200));
+    
+// Lazy loading des images avec Intersection Observer
+let lazyImageObserver;
+function setupLazyLoading() {
+  if ('IntersectionObserver' in window) {
+    lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          const lazyImage = entry.target;
+          lazyImage.src = lazyImage.dataset.src;
+          lazyImage.classList.remove('lazy');
+          lazyImageObserver.unobserve(lazyImage);
+        }
+      });
+    });
+        
+    document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
+      lazyImageObserver.observe(lazyImage);
+    });
+  } else {
+    // Fallback pour les navigateurs qui ne supportent pas Intersection Observer
+    document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
+      lazyImage.src = lazyImage.dataset.src;
+      lazyImage.classList.remove('lazy');
+    });
+  }
+}
+    
+// Cacher automatiquement la sidebar sur mobile lors du clic sur un filtre
+document.querySelectorAll('.sidebar button').forEach(button => {
+  button.addEventListener('click', () => {
+    if (window.innerWidth < 600) {
+      setTimeout(() => {
+        sidebar.classList.remove('active');
+      }, 300);
+    }
+  });
+});
+
+// Gestion du modal À propos
+const aboutButton = document.getElementById('aboutButton');
+const aboutModal = document.getElementById('aboutModal');
+const closeAboutModal = document.getElementById('closeAboutModal');
+
+// Ouvrir le modal
+aboutButton.addEventListener('click', () => {
+  // Forcer le titre du modal À propos
+  document.querySelector('#aboutModal .modal-title').textContent = "À propos de la Cagette Pirate";
+  
+  aboutModal.style.display = 'block';
+  setTimeout(() => {
+    aboutModal.classList.add('active');
+  }, 10);
+});
+
+// Fermer le modal en cliquant sur la croix
+closeAboutModal.addEventListener('click', () => {
+  aboutModal.classList.remove('active');
+  setTimeout(() => {
+    aboutModal.style.display = 'none';
+  }, 300);
+});
+
+// Fermer le modal en cliquant en dehors du contenu
+window.addEventListener('click', (event) => {
+  if (event.target === aboutModal) {
+    aboutModal.classList.remove('active');
+    setTimeout(() => {
+      aboutModal.style.display = 'none';
+    }, 300);
+  }
+});
+    
+// Initialiser l'application au chargement
+document.addEventListener('DOMContentLoaded', () => {
+  // Ajouter le lien d'administration
+  addAdminLink();
+  
+  // Vérifier si l'utilisateur est un administrateur
+  checkAdminStatus();
+  
+  // Sélectionner le tri par défaut
+  document.getElementById('sortByDateBtn').classList.add('active');
+
+  // Démarrer l'application
+  initApp();
+});
