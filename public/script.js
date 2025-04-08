@@ -242,7 +242,7 @@ function deleteComment(annonceId, commentId) {
   }
 }
 
-// Fonction pour ajouter le bouton Admin dans la sidebar
+// Fonction pour ajouter le bouton Admin (drapeau pirate)
 function addAdminLink() {
   const reportSection = document.querySelector('.report-section');
   if (reportSection) {
@@ -252,12 +252,39 @@ function addAdminLink() {
     
     const adminSection = document.createElement('div');
     adminSection.className = 'admin-section';
+    adminSection.style.marginBottom = '20px';
+    adminSection.style.textAlign = 'center';
     
+    // Création du bouton drapeau pirate
     const adminButton = document.createElement('button');
-    adminButton.id = 'adminLoginButton';
-    adminButton.className = 'admin-button';
-    adminButton.innerHTML = '<i class="fas fa-user-shield"></i> Administration';
-    adminButton.addEventListener('click', showAdminLoginForm);
+    adminButton.innerHTML = '☠️'; // Emoji drapeau pirate (crâne et os croisés)
+    
+    // Styles pour le bouton
+    adminButton.style.fontSize = '24px';
+    adminButton.style.padding = '5px 10px';
+    adminButton.style.background = 'none';
+    adminButton.style.border = '1px solid #ddd';
+    adminButton.style.borderRadius = '50%';
+    adminButton.style.cursor = 'pointer';
+    adminButton.style.opacity = '0.5'; // Semi-transparent pour être discret
+    adminButton.style.transition = 'all 0.3s ease';
+    
+    // Effet de survol
+    adminButton.onmouseover = function() {
+      this.style.opacity = '1';
+      this.style.transform = 'scale(1.1)';
+    };
+    
+    adminButton.onmouseout = function() {
+      this.style.opacity = '0.5';
+      this.style.transform = 'scale(1)';
+    };
+    
+    // Ajouter la fonction de connexion
+    adminButton.onclick = showAdminLoginForm;
+    
+    // Texte d'aide au survol
+    adminButton.title = "Administration";
     
     adminSection.appendChild(adminButton);
     separator.after(adminSection);
