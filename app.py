@@ -59,6 +59,14 @@ def subscribe():
     if not email:
         return "Email requis", 400
 
+    # Vérifie si l'adresse est déjà inscrite (pending ou confirmed)
+    existing = db.collection("subscribers").where("email", "==", email).stream()
+    for doc in existing:
+        status = doc.to_dict().get("status")
+        if status in ["pending", "confirmed"]:
+            return redirect("https://pirate-4c51ce.gitlab.io/deja-inscrit.html")
+
+    # Sinon, crée un nouveau token et ajoute le document
     token = str(uuid.uuid4())
     db.collection("subscribers").add({
         "email": email,
@@ -69,6 +77,7 @@ def subscribe():
 
     send_confirmation_email(email, token)
     return redirect("https://pirate-4c51ce.gitlab.io/merci.html")
+
 
 # Route : confirmation du lien
 @app.route("/api/confirm", methods=["GET"])
