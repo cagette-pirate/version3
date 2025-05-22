@@ -81,5 +81,20 @@ def confirm():
 
     return jsonify({"success": found})
 
+# Route : désinscription
+@app.route("/api/unsubscribe", methods=["GET"])
+def unsubscribe():
+    token = request.args.get("token")
+    if not token:
+        return jsonify({"success": False, "error": "Token manquant"})
+
+    docs = db.collection("subscribers").where("token", "==", token).stream()
+    found = False
+    for doc in docs:
+        db.collection("subscribers").document(doc.id).update({"status": "unsubscribed"})
+        found = True
+
+    return jsonify({"success": found})
+
 if __name__ == "__main__":
     app.run(debug=True)
