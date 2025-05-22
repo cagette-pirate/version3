@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 import firebase_admin
 from firebase_admin import firestore
+from datetime import timedelta, datetime
 
 # Initialisation Firebase via variable GOOGLE_APPLICATION_CREDENTIALS
 firebase_admin.initialize_app()
@@ -59,20 +60,37 @@ def subscribe():
     if not email:
         return "Email requis", 400
 
-    # Vérifie si l'adresse est déjà inscrite (pending ou confirmed)
+    now = datetime.now()
+    expired_pending = False
+
     existing = db.collection("subscribers").where("email", "==", email).stream()
     for doc in existing:
-        status = doc.to_dict().get("status")
-        if status in ["pending", "confirmed"]:
+        data = doc.to_dict()
+        status = data.get("status")
+        ts = data.get("timestamp")
+
+        if isinstance(ts, str):
+            ts = datetime.fromisoformat(ts)
+
+        # Cas : déjà inscrit
+        if status == "confirmed":
             return redirect("https://pirate-4c51ce.gitlab.io/deja-inscrit.html")
 
-    # Sinon, crée un nouveau token et ajoute le document
+        # Cas : token pending expiré (plus de 24h)
+        if status == "pending" and (now - ts > timedelta(hours=24)):
+            db.collection("subscribers").document(doc.id).delete()
+            expired_pending = True
+        elif status == "pending":
+            # Token encore valide : refuse l'inscription
+            return redirect("https://pirate-4c51ce.gitlab.io/deja-inscrit.html")
+
+    # Nouveau token et inscription
     token = str(uuid.uuid4())
     db.collection("subscribers").add({
         "email": email,
         "token": token,
         "status": "pending",
-        "timestamp": datetime.now().isoformat()
+        "timestamp": now.isoformat()
     })
 
     send_confirmation_email(email, token)
