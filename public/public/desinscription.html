@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Désinscription</title>
+</head>
+<body>
+  <h1 id="message">Traitement de votre désinscription...</h1>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    fetch(`https://pirate-2ea6.onrender.com/api/unsubscribe?token=${token}`)
+      .then(response => {
+        if (!response.ok) throw new Error("Erreur HTTP");
+        return response.json();
+      })
+      .then(data => {
+        const msg = document.getElementById("message");
+        msg.innerText = data.success
+          ? "😢 Vous avez été désinscrit·e de la newsletter Cagette Pirate. À bientôt !"
+          : "⚠️ Le lien de désinscription est invalide ou a déjà été utilisé.";
+      })
+      .catch(error => {
+        console.error("Erreur de désinscription :", error);
+        document.getElementById("message").innerText =
+          "❌ Une erreur est survenue pendant la désinscription.";
+      });
+  </script>
+</body>
+</html>
