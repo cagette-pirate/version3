@@ -104,7 +104,8 @@ def unsubscribe():
     docs = db.collection("subscribers").where("token", "==", token).stream()
     found = False
     for doc in docs:
-        db.collection("subscribers").document(doc.id).update({"status": "unsubscribed"})
+        db.collection("subscribers").document(doc.id).delete()
+
         found = True
 
     return jsonify({"success": found})
