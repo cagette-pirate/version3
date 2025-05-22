@@ -4,27 +4,51 @@ import uuid
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime
+import os
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import firestore
 
-# Initialisation Firebase
+# Initialisation Firebase via variable GOOGLE_APPLICATION_CREDENTIALS
 firebase_admin.initialize_app()
 db = firestore.client()
 
 app = Flask(__name__)
 CORS(app)
 
+# Configuration SMTP Gmail
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
+smtp_user = "g.akermann@gmail.com"
+smtp_password = "uqeu rete njfa hkpl"
+
+# Fonction d'envoi de l'e-mail de confirmation
 def send_confirmation_email(email, token):
-    confirm_url = f"https://tonutilisateur.gitlab.io/tonrepo/confirmation.html?token={token}"
-    message = MIMEText(f"Merci de vous être inscrit à la newsletter ! Cliquez ici pour confirmer : {confirm_url}")
-    message['Subject'] = "Confirmez votre inscription"
-    message['From'] = "TON_ADRESSE@gmail.com"
+    confirm_url = f"https://pirate-4c51ce.gitlab.io/confirmation.html?token={token}"
+    
+    body = f"""
+Bonjour,
+
+Merci de vous être inscrit·e à la newsletter de La Cagette Pirate !
+
+Pour confirmer votre inscription, cliquez sur le lien ci-dessous :
+👉 {confirm_url}
+
+Si vous n’avez rien demandé, ignorez simplement ce message.
+
+À bientôt ✊🌱
+— L’équipe de La Cagette Pirate
+"""
+    message = MIMEText(body)
+    message['Subject'] = "Confirmez votre inscription à la newsletter"
+    message['From'] = smtp_user
     message['To'] = email
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login("TON_ADRESSE@gmail.com", "TON_APP_PASSWORD")
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_user, smtp_password)
         server.sendmail(message['From'], [message['To']], message.as_string())
 
+# Route : formulaire d'inscription
 @app.route("/api/subscribe", methods=["POST"])
 def subscribe():
     email = request.form.get("email")
@@ -38,9 +62,11 @@ def subscribe():
         "status": "pending",
         "timestamp": datetime.now().isoformat()
     })
-    send_confirmation_email(email, token)
-    return redirect("https://tonutilisateur.gitlab.io/tonrepo/merci.html")
 
+    send_confirmation_email(email, token)
+    return redirect("https://pirate-4c51ce.gitlab.io/merci.html")
+
+# Route : confirmation du lien
 @app.route("/api/confirm", methods=["GET"])
 def confirm():
     token = request.args.get("token")
@@ -56,4 +82,4 @@ def confirm():
     return jsonify({"success": found})
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
