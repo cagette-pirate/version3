@@ -24,6 +24,7 @@ smtp_password = "uqeu rete njfa hkpl"
 # Fonction d'envoi de l'e-mail de confirmation
 def send_confirmation_email(email, token):
     confirm_url = f"https://pirate-4c51ce.gitlab.io/confirmation.html?token={token}"
+    unsubscribe_url = f"https://pirate-4c51ce.gitlab.io/desinscription.html?token={token}"
     
     body = f"""
 Bonjour,
@@ -34,6 +35,9 @@ Pour confirmer votre inscription, cliquez sur le lien ci-dessous :
 👉 {confirm_url}
 
 Si vous n’avez rien demandé, ignorez simplement ce message.
+
+Si vous avez confirmé mais que vous ne souhaitez plus recevoir de messages :
+👉 {unsubscribe_url}
 
 À bientôt ✊🌱
 — L’équipe de La Cagette Pirate
