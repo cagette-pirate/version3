@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmation</title>
+</head>
+<body>
+  <h1 id="message">Confirmation en cours...</h1>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    fetch(`https://TON_SERVEUR_BACKEND/api/confirm?token=${token}`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("message").innerText =
+          data.success
+            ? "Votre inscription a bien été confirmée. Merci !"
+            : "Le lien de confirmation est invalide ou expiré.";
+      })
+      .catch(() => {
+        document.getElementById("message").innerText =
+          "Une erreur est survenue lors de la confirmation.";
+      });
+  </script>
+</body>
+</html>
