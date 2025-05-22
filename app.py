@@ -37,7 +37,7 @@ Pour confirmer votre inscription, cliquez sur le lien ci-dessous :
 Si vous n’avez rien demandé, ignorez simplement ce message.
 
 Si vous avez confirmé mais que vous ne souhaitez plus recevoir de messages :
-👉 {unsubscribe_url}
+👉 <a href="{unsubscribe_url}">cliquez ici pour vous désabonner</a>.
 
 À bientôt ✊🌱
 — L’équipe de La Cagette Pirate
