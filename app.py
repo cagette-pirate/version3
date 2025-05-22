@@ -8,8 +8,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 # Initialisation Firebase
-cred = credentials.Certificate("firebase_config.json")  # ne pas versionner ce fichier !
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app()
 db = firestore.client()
 
 app = Flask(__name__)
