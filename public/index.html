@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <!-- Firebase SDK - DOIT ÊTRE CHARGÉ EN PREMIER -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -13,13 +15,361 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   
-  <!-- Votre fichier CSS -->
-  <link rel="stylesheet" href="styles.css">
-  
   <title>La Cagette Pirate</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    /* Barre de filtres en haut */
+    .top-filters {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .filters-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-bar {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .category-dropdown {
+      position: relative;
+    }
+
+    .category-button {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #667eea;
+      background: white;
+      color: #667eea;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+    }
+
+    .category-button:hover {
+      background: #667eea;
+      color: white;
+    }
+
+    .category-button.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .category-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.5rem;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-width: 250px;
+      z-index: 200;
+    }
+
+    .category-menu.show {
+      display: block;
+    }
+
+    .category-item {
+      padding: 0.8rem 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .category-item:last-child {
+      border-bottom: none;
+    }
+
+    .category-item:hover {
+      background: #f8f9ff;
+      color: #667eea;
+    }
+
+    .category-item.active {
+      background: #667eea;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Contenu principal */
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .annonces-count {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    .annonces-count span {
+      color: #667eea;
+      font-weight: 700;
+    }
+
+    .spinner {
+      display: none;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .annonces-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 2rem 0;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: #2c3e50;
+      color: white;
+      padding: 2rem 0;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .footer-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+      text-decoration: none;
+      padding: 0.8rem 1.5rem;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .footer-link:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .about-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    .about-button:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 0;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      color: #333;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    /* Toast notification */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 2000;
+    }
+
+    .toast {
+      display: none;
+      padding: 1rem 1.5rem;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* Menu mobile */
+    .mobile-menu-toggle {
+      display: none;
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 999;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .filters-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .category-dropdown {
+        width: 100%;
+      }
+
+      .category-button {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .category-menu {
+        width: 100%;
+      }
+
+      .annonces-container {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .mobile-menu-toggle {
+        display: flex;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Header du site avec logo ajouté -->
+  <!-- Header du site avec logo -->
   <header class="site-header">
     <div class="header-content">
       <img src="https://lacagette-coop.fr/files/CagettePirate_logo_pirate_longpng_20241004204418_20241004204514.png" alt="Logo La Cagette Pirate" class="header-logo">
@@ -29,86 +379,59 @@
     </div>
   </header>
 
-  <div class="container">
-    <!-- Barre latérale -->
-    <div class="sidebar">
+  <!-- Barre de filtres en haut -->
+  <div class="top-filters">
+    <div class="filters-container">
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Rechercher une annonce...">
       </div>
       
-      <!-- Sélecteurs de catégories -->
-      <div class="filter-section">
-        <h3>Catégories</h3>
-        <div class="filter-options">
-          <button class="tag-filter active" data-tag="alaune">Annonces à la une</button>
-          <button class="tag-filter" data-tag="all">Toutes les publications</button>
-          <button class="tag-filter" data-tag="1">Événement</button>
-          <button class="tag-filter" data-tag="2">Point de vue / Tribune</button>
-          <button class="tag-filter" data-tag="3">Recette de cuisine</button>
-          <button class="tag-filter" data-tag="4">Autre info</button>
-        </div>
-      </div>
-      
-      <!-- Filtre par date -->
-      <div class="date-filter">
-        <h3>Période</h3>
-        <select id="dateFilter">
-          <option value="all" selected>Toutes les périodes</option>
-          <option value="month">Dernier mois</option>
-          <option value="3months">3 derniers mois</option>
-          <option value="6months">6 derniers mois</option>
-          <option value="year">Dernière année</option>
-        </select>
-      </div>
-      
-      <!-- Séparateur et lien de soumission -->
-      <div class="separator"></div>
-      <div class="submit-annonce">
-        <a href="https://lacagette-coop.fr/?CagettePirateForm" target="_blank">Soumettre une annonce</a>
-      </div>
-      <div class="separator"></div>
-      
-      <!-- Boutons de tri stylisés -->
-      <div class="sort-section">
-        <h3>Trier par</h3>
-        <div class="sort-bar">
-          <button class="sort-button" id="sortByRandomBtn"><i class="fas fa-random"></i> Tri au hasard</button>
-          <button class="sort-button active" id="sortByDateBtn"><i class="fas fa-calendar-alt"></i> Date</button>
-          <button class="sort-button" id="sortByViewsBtn"><i class="fas fa-eye"></i> Vues</button>
-          <button class="sort-button" id="sortByLikesBtn"><i class="fas fa-heart"></i> Likes</button>
-        </div>
-      </div>    
-      
-      <!-- Lien À propos à ajouter dans la sidebar -->
-      <div class="separator"></div>
-      <div class="about-section">
-        <button id="aboutButton" class="about-button">
-          <i class="fas fa-info-circle"></i> À propos de la Cagette Pirate
+      <div class="category-dropdown">
+        <button class="category-button" id="categoryButton">
+          <i class="fas fa-filter"></i>
+          <span id="categoryLabel">Catégories</span>
+          <i class="fas fa-chevron-down"></i>
         </button>
-      </div>
-
-      <!-- Lien pour signaler une annonce -->
-      <div class="separator"></div>
-      <div class="report-section">
-        <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" class="report-button">
-          <i class="fas fa-flag"></i> Signaler une annonce
-        </a>
-      </div>
-    </div>
-    
-    <!-- Contenu principal -->
-    <div class="main-content">
-      <div class="annonces-count">Affichage de <span id="countAnnonces">0</span> annonces</div>
-      <div class="spinner" id="spinner"></div>
-      <div class="annonces-container" id="annoncesContainer"></div>
-      
-      <!-- Pagination -->
-      <div class="pagination" id="pagination">
-        <!-- Généré dynamiquement par JS -->
+        <div class="category-menu" id="categoryMenu">
+          <div class="category-item active" data-tag="alaune">À la une</div>
+          <div class="category-item" data-tag="1">Événement</div>
+          <div class="category-item" data-tag="2">Point de vue / Tribune</div>
+          <div class="category-item" data-tag="3">Recette</div>
+          <div class="category-item" data-tag="4">Autre info</div>
+        </div>
       </div>
     </div>
   </div>
-  
+
+  <!-- Contenu principal -->
+  <div class="container">
+    <div class="annonces-count">Affichage de <span id="countAnnonces">0</span> annonces</div>
+    <div class="spinner" id="spinner"></div>
+    <div class="annonces-container" id="annoncesContainer"></div>
+    
+    <!-- Pagination -->
+    <div class="pagination" id="pagination">
+      <!-- Généré dynamiquement par JS -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <a href="https://lacagette-coop.fr/?CagettePirateForm" target="_blank" class="footer-link">
+        <i class="fas fa-plus-circle"></i> Soumettre une annonce
+      </a>
+      
+      <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" class="footer-link">
+        <i class="fas fa-flag"></i> Signaler une annonce
+      </a>
+      
+      <button id="aboutButton" class="about-button">
+        <i class="fas fa-info-circle"></i> À propos
+      </button>
+    </div>
+  </footer>
+
   <!-- Bouton Menu Mobile -->
   <div class="mobile-menu-toggle" id="mobileMenuToggle">
     <i class="fas fa-bars"></i>
@@ -149,54 +472,52 @@
     </div>
   </div>
   
- <!-- Modal -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title"></h2>
-      <span class="close">&times;</span>
-    </div>
-    <img class="modal-image" alt="">
-    <!-- Le div ci-dessous sera ajouté dynamiquement en JavaScript quand il n'y a pas d'image -->
-    <!-- <div class="title-placeholder-modal"></div> -->
-    <div class="modal-body">
-      <div class="modal-meta">
-        <div class="modal-author"></div>
-        <div class="modal-date">
-          <i class="far fa-calendar-alt"></i>
-          <span></span>
-        </div>
+  <!-- Modal pour les annonces -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"></h2>
+        <span class="close">&times;</span>
       </div>
-      <div class="modal-tags"></div>
-      <div class="modal-description"></div>
-      <div class="num-annonce"></div>
-      
-      <div class="modal-actions">
-        <div class="modal-action-buttons">
-          <button class="modal-action-button modal-like-button">
-            <i class="far fa-heart"></i> J'aime
-          </button>
+      <img class="modal-image" alt="">
+      <div class="modal-body">
+        <div class="modal-meta">
+          <div class="modal-author"></div>
+          <div class="modal-date">
+            <i class="far fa-calendar-alt"></i>
+            <span></span>
+          </div>
         </div>
-        <div class="views-display">
-          <i class="fas fa-eye"></i>
-          <span class="views-count">0</span> vues
+        <div class="modal-tags"></div>
+        <div class="modal-description"></div>
+        <div class="num-annonce"></div>
+        
+        <div class="modal-actions">
+          <div class="modal-action-buttons">
+            <button class="modal-action-button modal-like-button">
+              <i class="far fa-heart"></i> J'aime
+            </button>
+          </div>
+          <div class="views-display">
+            <i class="fas fa-eye"></i>
+            <span class="views-count">0</span> vues
+          </div>
         </div>
-      </div>
-      
-      <!-- Section commentaires -->
-      <div class="comments-section">
-        <h3>Commentaires</h3>
-        <div class="comment-form">
-          <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
-          <button id="submitComment">Envoyer</button>
-        </div>
-        <div class="comments-list" id="commentsList">
-          <!-- Commentaires générés dynamiquement -->
+        
+        <!-- Section commentaires -->
+        <div class="comments-section">
+          <h3>Commentaires</h3>
+          <div class="comment-form">
+            <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
+            <button id="submitComment">Envoyer</button>
+          </div>
+          <div class="comments-list" id="commentsList">
+            <!-- Commentaires générés dynamiquement -->
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
   
   <!-- Container pour les toasts -->
   <div class="toast-container">
@@ -205,5 +526,51 @@
   
   <!-- Votre fichier JavaScript -->
   <script src="script.js"></script>
+  
+  <!-- Script pour le menu déroulant des catégories -->
+  <script>
+    // Gestion du menu déroulant de catégories
+    const categoryButton = document.getElementById('categoryButton');
+    const categoryMenu = document.getElementById('categoryMenu');
+    const categoryLabel = document.getElementById('categoryLabel');
+    const categoryItems = document.querySelectorAll('.category-item');
+
+    // Ouvrir/fermer le menu
+    categoryButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      categoryMenu.classList.toggle('show');
+    });
+
+    // Fermer le menu si on clique ailleurs
+    document.addEventListener('click', (e) => {
+      if (!categoryMenu.contains(e.target) && e.target !== categoryButton) {
+        categoryMenu.classList.remove('show');
+      }
+    });
+
+    // Sélection d'une catégorie
+    categoryItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        // Retirer la classe active de tous les items
+        categoryItems.forEach(i => i.classList.remove('active'));
+        
+        // Ajouter la classe active à l'item cliqué
+        item.classList.add('active');
+        
+        // Mettre à jour le label du bouton
+        categoryLabel.textContent = item.textContent;
+        
+        // Fermer le menu
+        categoryMenu.classList.remove('show');
+        
+        // Déclencher l'événement pour filtrer (si votre script.js l'écoute)
+        const tag = item.getAttribute('data-tag');
+        const event = new CustomEvent('categorychange', { detail: { tag } });
+        document.dispatchEvent(event);
+      });
+    });
+  </script>
 </body>
 </html>
