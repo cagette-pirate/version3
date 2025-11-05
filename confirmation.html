@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmation d’inscription</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+      background-color: #f5f5f5;
+    }
+    #message {
+      font-size: 1.4em;
+      margin-top: 2em;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="message">Confirmation en cours...</h1>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    fetch(`https://pirate-2ea6.onrender.com/api/confirm?token=${token}`)
+      .then(response => {
+        if (!response.ok) throw new Error("Erreur HTTP");
+        return response.json();
+      })
+      .then(data => {
+        const msg = document.getElementById("message");
+        msg.innerText = data.success
+          ? "✅ Votre inscription a bien été confirmée. Merci pour votre confiance !"
+          : "⚠️ Le lien de confirmation est invalide ou expiré.";
+      })
+      .catch(error => {
+        console.error("Erreur pendant la confirmation :", error);
+        document.getElementById("message").innerText =
+          "❌ Une erreur est survenue lors de la confirmation.";
+      });
+  </script>
+</body>
+</html>
