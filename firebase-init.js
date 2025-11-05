@@ -1,13 +1,13 @@
 // Configuration Firebase
 const firebaseConfig = {
-  apiKey: "FIREBASE_API_KEY_PLACEHOLDER",
-  authDomain: "FIREBASE_AUTH_DOMAIN_PLACEHOLDER",
-  databaseURL: "FIREBASE_DATABASE_URL_PLACEHOLDER",
-  projectId: "FIREBASE_PROJECT_ID_PLACEHOLDER",
-  storageBucket: "FIREBASE_STORAGE_BUCKET_PLACEHOLDER",
-  messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID_PLACEHOLDER",
-  appId: "FIREBASE_APP_ID_PLACEHOLDER",
-  measurementId: "FIREBASE_MEASUREMENT_ID_PLACEHOLDER"
+  apiKey: "AIzaSyD8L0rRQqlBMTTMlrvWYmu8xWbn1szMl0Y",
+  authDomain: "cagette-pas-officielle.firebaseapp.com",
+  databaseURL: "https://cagette-pas-officielle-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "cagette-pas-officielle",
+  storageBucket: "cagette-pas-officielle.appspot.com",
+  messagingSenderId: "57232007409",
+  appId: "1:57232007409:web:d6ae6f6ebfd91634a90950",
+  measurementId: "G-MMLSJFZTMN"
 };
 
 // Initialisation Firebase
