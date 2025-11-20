@@ -465,48 +465,6 @@ function createAnnonceCard(entry) {
   // Vérifier si l'annonce est likée
   const likedAnnonces = JSON.parse(localStorage.getItem('likedAnnonces')) || {};
   const isLiked = likedAnnonces[entry.id_fiche];
-  
-  // Déterminer l'auteur
-  const author = entry.bf_pseudo ? entry.bf_pseudo : (entry.bf_description2 || 'Anonyme') + ' ' + (entry.bf_description1 || '');
-  
-  // Créer le HTML pour la carte
-  annonceDiv.innerHTML = `
-    <div class="annonce-image ${!entry.fichierbf_file ? 'no-image-container' : ''}">
-      ${entry.fichierbf_file 
-        ? `<img src="https://lacagette-coop.fr/files/${entry.fichierbf_file}" alt="${entry.bf_titre}" loading="lazy">`
-        : `<div class="title-placeholder">${entry.bf_titre}</div>`
-      }
-    </div>
-    <div class="annonce-content">
-      <div class="annonce-tags">
-        ${tagsArray.map(tag => `<span class="annonce-tag">${tagsMap[tag] || tag}</span>`).join('')}
-      </div>
-      <h2>${entry.bf_titre}</h2>
-      <p class="author">${author}</p>
-      <p class="date"><i class="far fa-calendar-alt"></i> ${formattedDate}</p>
-      <p class="excerpt">${entry.bf_description.substring(0, 150)}${entry.bf_description.length > 150 ? '...' : ''}</p>
-      <div class="interaction-buttons">
-        <div class="button-group">
-          <button class="like-button ${isLiked ? 'active' : ''}" data-id="${entry.id_fiche}">
-            <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
-            <span class="likes-count">${likes}</span>
-          </button>
-          <div class="comments-indicator" title="${comments} commentaire(s)">
-            <i class="far fa-comment"></i>
-            <span class="comments-count">${comments}</span>
-          </div>
-        </div>
-        <div class="views-display">
-          <i class="fas fa-eye"></i>
-          <span class="views-count">${views}</span>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  // Ajouter les écouteurs d'événements
-  annonceDiv.querySelector('h2').addEventListener('click', () => openModal(entry));
-  annonceDiv.querySelector('.annonce-image').addEventListener('click', () => openModal(entry));
   annonceDiv.querySelector('.comments-indicator').addEventListener('click', () => openModal(entry));
   
   // Bouton "J'aime"
