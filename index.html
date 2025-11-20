@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Firebase SDK - DOIT ÊTRE CHARGÉ EN PREMIER -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -12,17 +15,19 @@
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  
+
   <!-- Votre fichier CSS -->
   <link rel="stylesheet" href="styles.css">
-  
+
   <title>La Cagette Pirate</title>
 </head>
+
 <body>
   <!-- Header du site avec logo ajouté -->
   <header class="site-header">
     <div class="header-content">
-      <img src="https://lacagette-coop.fr/files/CagettePirate_logo_pirate_longpng_20241004204418_20241004204514.png" alt="Logo La Cagette Pirate" class="header-logo">
+      <img src="https://lacagette-coop.fr/files/CagettePirate_logo_pirate_longpng_20241004204418_20241004204514.png"
+        alt="Logo La Cagette Pirate" class="header-logo">
       <div class="header-text">
         <p>Découvrez les événements et informations partagés par les membres</p>
       </div>
@@ -35,24 +40,22 @@
       <div class="search-bar">
         <input type="text" id="searchInput" placeholder="Rechercher une annonce...">
       </div>
-      
+
       <!-- Sélecteurs de catégories -->
       <div class="filter-section">
         <h3>Catégories</h3>
         <div class="filter-options">
-          <button class="tag-filter active" data-tag="alaune">Annonces à la une</button>
-          <button class="tag-filter" data-tag="all">Toutes les publications</button>
           <button class="tag-filter" data-tag="1">Événement</button>
           <button class="tag-filter" data-tag="2">Point de vue / Tribune</button>
           <button class="tag-filter" data-tag="3">Recette de cuisine</button>
           <button class="tag-filter" data-tag="4">Autre info</button>
         </div>
       </div>
-      
+
       <!-- Filtre par date -->
       <div class="date-filter">
         <h3>Période</h3>
-        <select id="dateFilter">
+        <select id="dateFilter" aria-label="Filtrer par période">
           <option value="all" selected>Toutes les périodes</option>
           <option value="month">Dernier mois</option>
           <option value="3months">3 derniers mois</option>
@@ -60,150 +63,302 @@
           <option value="year">Dernière année</option>
         </select>
       </div>
-      
-      <!-- Séparateur et lien de soumission -->
+
       <div class="separator"></div>
-      <div class="submit-annonce">
-        <a href="https://lacagette-coop.fr/?CagettePirateForm" target="_blank">Soumettre une annonce</a>
-      </div>
-      <div class="separator"></div>
-      
-      <!-- Boutons de tri stylisés -->
+
+      <!-- Boutons de tri -->
       <div class="sort-section">
         <h3>Trier par</h3>
-        <div class="sort-bar">
-          <button class="sort-button" id="sortByRandomBtn"><i class="fas fa-random"></i> Tri au hasard</button>
-          <button class="sort-button active" id="sortByDateBtn"><i class="fas fa-calendar-alt"></i> Date</button>
-          <button class="sort-button" id="sortByViewsBtn"><i class="fas fa-eye"></i> Vues</button>
-          <button class="sort-button" id="sortByLikesBtn"><i class="fas fa-heart"></i> Likes</button>
+        <div class="sort-buttons">
+          <button id="sortByRandomBtn" class="sort-button">
+            <i class="fas fa-random"></i> Aléatoire
+          </button>
+          <button id="sortByDateBtn" class="sort-button active">
+            <i class="far fa-calendar-alt"></i> Date
+          </button>
+          <button id="sortByViewsBtn" class="sort-button">
+            <i class="far fa-eye"></i> Vues
+          </button>
+          <button id="sortByLikesBtn" class="sort-button">
+            <i class="far fa-heart"></i> J'aime
+          </button>
         </div>
-      </div>    
-      
-      <!-- Lien À propos à ajouter dans la sidebar -->
-      <div class="separator"></div>
-      <div class="about-section">
-        <button id="aboutButton" class="about-button">
-          <i class="fas fa-info-circle"></i> À propos de la Cagette Pirate
+      </div>
+    </div>
+
+    <!-- Zone principale -->
+    <div class="main-content">
+      <div class="annonces-header">
+        <h2>Annonces (<span id="countAnnonces">0</span>)</h2>
+        <button id="mobileMenuToggle" class="mobile-menu-toggle">
+          <i class="fas fa-filter"></i> Filtres
         </button>
       </div>
-
-      <!-- Lien pour signaler une annonce -->
-      <div class="separator"></div>
-      <div class="report-section">
-        <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" class="report-button">
-          <i class="fas fa-flag"></i> Signaler une annonce
-        </a>
-      </div>
-    </div>
-    
-    <!-- Contenu principal -->
-    <div class="main-content">
-      <div class="annonces-count">Affichage de <span id="countAnnonces">0</span> annonces</div>
-      <div class="spinner" id="spinner"></div>
       <div class="annonces-container" id="annoncesContainer"></div>
-      
-      <!-- Pagination -->
-      <div class="pagination" id="pagination">
-        <!-- Généré dynamiquement par JS -->
+      <div id="spinner" class="spinner" style="display:none;">
+        <div class="spinner-icon"></div>
+      </div>
+      <div id="loadMoreContainer" class="load-more-container" style="display:none;">
+        <button id="loadMoreBtn" class="load-more-btn">
+          <i class="fas fa-chevron-down"></i> Charger plus
+        </button>
       </div>
     </div>
-  </div>
-  
-  <!-- Bouton Menu Mobile -->
-  <div class="mobile-menu-toggle" id="mobileMenuToggle">
-    <i class="fas fa-bars"></i>
   </div>
 
   <!-- Modal À propos -->
   <div id="aboutModal" class="modal about-modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title">À propos de la Cagette Pirate</h2>
+        <h2 class="modal-title">À propos de La Cagette Pirate</h2>
         <span class="close" id="closeAboutModal">&times;</span>
       </div>
       <div class="modal-body">
         <div class="about-text">
           <h3 class="about-title">Qui sommes-nous ?</h3>
           <p>
-            La Cagette Pirate est une initiative collective de membres de La Cagette, supermarché coopératif et participatif de Montpellier. Nous portons cet espace d'échange et de partage d'informations au sein de notre communauté de coopérateur.ices.
+            La Cagette Pirate est une initiative citoyenne portée par des membres de La Cagette, supermarché coopératif
+            et
+            participatif de Montpellier. Nous portons cet espace d'échange et de partage d'informations au sein de
+            notre
+            communauté de coopérateur.ices.
           </p>
           <p>
-            La Cagette Pirate est portée (par ordre alphabétique) par Grégori Akermann, Anna Buy, Elie Daviron, Catherine Gustau, Antonin Molino, en lien étroit avec le Comité Communication de la Cagette.
+            La Cagette Pirate est portée (par ordre alphabétique) par Grégori Akermann, Anna Buy, Elie Daviron,
+            Catherine Gustau, Antonin Molino, en lien étroit avec le Comité Communication de la Cagette.
           </p>
-          
+
           <h3 class="about-title">Notre ambition</h3>
           <p>
-            Nous souhaitons créer un espace d'expression libre permettant aux coopérateur.ices de partager des événements, des opinions, des recettes ou tout autres informations pertinentes pour les membres.
+            Nous souhaitons créer un espace d'expression libre permettant aux coopérateur.ices de partager des
+            événements, des opinions, des recettes ou tout autres informations pertinentes pour les membres.
           </p>
-          
+
           <h3 class="about-title">Comment participer ?</h3>
           <p>
-            Tous les membres de La Cagette peuvent soumettre une annonce en utilisant le formulaire disponible sur le site. Les contributions sont modérées par un collectif bénévole pour garantir le respect de notre charte.
+            Tous les membres de La Cagette peuvent soumettre une annonce en utilisant le formulaire disponible sur le
+            site. Les contributions sont modérées par un collectif bénévole pour garantir le respect de notre charte.
           </p>
-          
+
           <p>
-            <em>Note : La Cagette Pirate est une initiative indépendante et n'engage pas officiellement La Cagette, supermarché coopératif et participatif de Montpellier.</em>
+            <em>Note : La Cagette Pirate est une initiative indépendante et n'engage pas officiellement La Cagette,
+              supermarché coopératif et participatif de Montpellier.</em>
           </p>
         </div>
       </div>
     </div>
   </div>
-  
- <!-- Modal -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 class="modal-title"></h2>
-      <span class="close">&times;</span>
-    </div>
-    <img class="modal-image" alt="">
-    <!-- Le div ci-dessous sera ajouté dynamiquement en JavaScript quand il n'y a pas d'image -->
-    <!-- <div class="title-placeholder-modal"></div> -->
-    <div class="modal-body">
-      <div class="modal-meta">
-        <div class="modal-author"></div>
-        <div class="modal-date">
-          <i class="far fa-calendar-alt"></i>
-          <span></span>
-        </div>
+
+  <!-- Modal CGU -->
+  <div id="cguModal" class="modal cgu-modal about-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Conditions Générales d'Utilisation (CGU)</h2>
+        <span class="close" id="closeCguModal">&times;</span>
       </div>
-      <div class="modal-tags"></div>
-      <div class="modal-description"></div>
-      <div class="num-annonce"></div>
-      
-      <div class="modal-actions">
-        <div class="modal-action-buttons">
-          <button class="modal-action-button modal-like-button">
-            <i class="far fa-heart"></i> J'aime
-          </button>
-        </div>
-        <div class="views-display">
-          <i class="fas fa-eye"></i>
-          <span class="views-count">0</span> vues
-        </div>
-      </div>
-      
-      <!-- Section commentaires -->
-      <div class="comments-section">
-        <h3>Commentaires</h3>
-        <div class="comment-form">
-          <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
-          <button id="submitComment">Envoyer</button>
-        </div>
-        <div class="comments-list" id="commentsList">
-          <!-- Commentaires générés dynamiquement -->
+      <div class="modal-body">
+        <div class="about-text">
+          <p><strong>Dernière mise à jour : 20/11/2025</strong></p>
+
+          <h3 class="about-title">Préambule</h3>
+          <p>Le service « La Cagette Pirate » est un espace d'annonces communautaires réservé aux membres du
+            supermarché
+            coopératif La Cagette (Montpellier). Ce service a pour vocation de faciliter l'entraide, l'information et
+            l'échange entre coopérateurs.</p>
+          <p>L'utilisation du service implique l'acceptation sans réserve des présentes Conditions Générales
+            d'Utilisation (CGU).</p>
+
+          <hr>
+
+          <h3 class="about-title">Article 1 : Objet et Définitions</h3>
+          <p>Les présentes CGU ont pour objet de définir les modalités de mise à disposition des services du site « La
+            Cagette Pirate » et les conditions d'utilisation du service par l'utilisateur.</p>
+          <ul>
+            <li><strong>L'Éditeur / L'Hébergeur :</strong> Désigne l'entité gérant la plateforme technique La Cagette
+              Pirate (ci-après « La Plateforme »).</li>
+            <li><strong>L'Utilisateur :</strong> Désigne toute personne membre de la coopérative La Cagette utilisant
+              le
+              site ou y postant une annonce.</li>
+            <li><strong>Contenu :</strong> Désigne les textes, images, photos et informations mis en ligne par
+              l'Utilisateur.</li>
+          </ul>
+
+          <h3 class="about-title">Article 2 : Statut d'Hébergeur et Limitation de Responsabilité</h3>
+          <p>C'est le point central des présentes conditions. La Cagette Pirate agit exclusivement en qualité
+            d'hébergeur de contenu au sens de l'article 6-I-2 de la Loi pour la Confiance dans l'Économie Numérique
+            (LCEN) du 21 juin 2004.</p>
+          <p>À ce titre :</p>
+          <ol>
+            <li><strong>Absence de contrôle a priori :</strong> La Cagette Pirate n'opère aucune sélection,
+              vérification
+              ou contrôle préalable des contenus mis en ligne par les Utilisateurs. Le rôle de La Plateforme est
+              purement technique, passif et neutre.</li>
+            <li><strong>Exonération de responsabilité :</strong> La responsabilité de La Cagette Pirate (et par
+              extension celle du supermarché coopératif La Cagette) ne saurait être engagée du fait des contenus
+              (textes, images, propos) déposés par les Utilisateurs. L'Utilisateur est seul responsable des annonces
+              qu'il publie.</li>
+            <li><strong>Intervention a posteriori :</strong> La responsabilité de l'hébergeur ne pourra être
+              recherchée
+              que s'il n'a pas agi promptement pour retirer un contenu illicite après en avoir eu connaissance
+              effective
+              (via un signalement conforme, voir Article 6).</li>
+          </ol>
+
+          <h3 class="about-title">Article 3 : Engagements et Responsabilité de l'Utilisateur</h3>
+          <p>L'Utilisateur est seul responsable du Contenu qu'il publie. En postant une annonce, il s'engage à
+            respecter
+            les lois et règlements en vigueur.</p>
+          <p>Il est strictement interdit de publier des contenus :</p>
+          <ul>
+            <li>Diffamatoires, injurieux, calomnieux ou portant atteinte à l'honneur d'autrui.</li>
+            <li>Incitant à la haine, à la violence, au racisme ou à la discrimination.</li>
+            <li>Portant atteinte à la vie privée ou au droit à l'image de tiers (l'Utilisateur garantit avoir
+              l'autorisation des personnes figurant sur les photos et que celles-ci sont libres de droit).</li>
+            <li>Susceptibles de choquer un public sensible ou des mineurs.</li>
+          </ul>
+          <p>La Cagette Pirate n'accueille pas d'annonces :</p>
+          <ul>
+            <li>À caractère commercial (publicité, revente à but lucratif professionnel).</li>
+            <li>À caractère ésotérique (en contradiction avec la démarche rationnelle ou scientifique promue par la
+              coopérative).</li>
+          </ul>
+          <p>L'Utilisateur garantit La Cagette Pirate contre toute plainte, recours ou action de tiers qui pourrait
+            découler du contenu qu'il a publié.</p>
+
+          <h3 class="about-title">Article 4 : Données Personnelles et Anonymat</h3>
+          <p>Pour des raisons de confidentialité au sein de la communauté, les Utilisateurs peuvent choisir de publier
+            des annonces de manière nominative ou sous pseudonyme/anonyme vis-à-vis du public.</p>
+          <p>Cependant, conformément à la législation en vigueur (LCEN) imposant aux hébergeurs de pouvoir identifier
+            les auteurs de contenus :</p>
+          <ul>
+            <li><strong>Collecte obligatoire :</strong> La Cagette Pirate conserve obligatoirement les données
+              permettant l'identification de l'auteur de l'annonce (Nom, Prénom, Email, IP de connexion, etc.), même
+              si
+              celui-ci choisit d'apparaître anonymement sur le site.</li>
+            <li><strong>Transmission aux autorités :</strong> Ces données sont couvertes par le secret professionnel
+              mais pourront être transmises aux autorités judiciaires sur réquisition, notamment en cas d'infraction
+              (diffamation, escroquerie, etc.).</li>
+          </ul>
+          <p>Les données sont traitées conformément au RGPD. L'Utilisateur dispose d'un droit d'accès, de
+            rectification
+            et de suppression de ses données en contactant l'administration de la Plateforme.</p>
+
+          <h3 class="about-title">Article 5 : Propriété Intellectuelle</h3>
+          <p>L'Utilisateur reste propriétaire de tout le contenu qu'il publie. Toutefois, en publiant une annonce sur
+            La
+            Cagette Pirate, l'Utilisateur concède à la Plateforme une licence non exclusive, gratuite et mondiale
+            permettant de reproduire, représenter et adapter ce contenu (ex: redimensionnement d'image) pour les
+            besoins
+            techniques de fonctionnement du site.</p>
+
+          <h3 class="about-title">Article 6 : Modération et Signalement de Contenu</h3>
+          <p><strong>6.1 Modération a posteriori :</strong> Les annonces publiées sur La Cagette Pirate font l'objet
+            d'une modération a posteriori. Elles ne sont pas validées avant publication. Elles sont relues par un
+            modérateur uniquement si elles sont signalées comme non conformes.</p>
+          <p><strong>6.2 Procédure de signalement :</strong> Si un Utilisateur ou un tiers estime qu'une annonce
+            contrevient aux règles (loi française, droit à l'image, contenu commercial ou ésotérique), il est invité à
+            la signaler via le formulaire dédié accessible à l'adresse suivante :</p>
+          <p><a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank"
+              rel="noopener">https://lacagette-coop.fr/?CagettePirateSignalement</a></p>
+          <p>Le signalement doit être sincère. Pour permettre un traitement rapide, l'Utilisateur doit fournir le
+            numéro
+            de l'annonce litigieuse ainsi que les raisons du signalement. Dès réception d'un signalement valide, La
+            Cagette Pirate agira promptement pour retirer le contenu litigieux ou en rendre l'accès impossible.</p>
+
+          <h3 class="about-title">Article 7 : Modification et Interruption du Service</h3>
+          <p>La Cagette Pirate se réserve le droit de modifier ou d'interrompre le service à tout moment, sans préavis
+            et sans que cela ne puisse donner lieu à une quelconque indemnisation. L'hébergeur se réserve également le
+            droit de supprimer sans préavis tout contenu jugé contraire aux présentes CGU.</p>
+
+          <h3 class="about-title">Article 8 : Droit Applicable et Juridiction</h3>
+          <p>Les présentes CGU sont soumises au droit français. En cas de litige, et à défaut d'accord amiable, les
+            tribunaux du ressort de Montpellier seront seuls compétents.</p>
         </div>
       </div>
     </div>
   </div>
-</div>
-  
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"></h2>
+        <span class="close">&times;</span>
+      </div>
+      <img class="modal-image" alt="">
+      <!-- Le div ci-dessous sera ajouté dynamiquement en JavaScript quand il n'y a pas d'image -->
+      <!-- <div class="title-placeholder-modal"></div> -->
+      <div class="modal-body">
+        <div class="modal-meta">
+          <div class="modal-author"></div>
+          <div class="modal-date">
+            <i class="far fa-calendar-alt"></i>
+            <span></span>
+          </div>
+        </div>
+        <div class="modal-tags"></div>
+        <div class="modal-description"></div>
+        <div class="num-annonce"></div>
+
+        <div class="modal-actions">
+          <div class="modal-action-buttons">
+            <button class="modal-action-button modal-like-button">
+              <i class="far fa-heart"></i> J'aime
+            </button>
+          </div>
+          <div class="views-display">
+            <i class="fas fa-eye"></i>
+            <span class="views-count">0</span> vues
+          </div>
+        </div>
+
+        <!-- Section commentaires -->
+        <div class="comments-section">
+          <h3>Commentaires</h3>
+          <div class="comment-form">
+            <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
+            <button id="submitComment">Envoyer</button>
+          </div>
+          <div class="comments-list" id="commentsList">
+            <!-- Commentaires générés dynamiquement -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Container pour les toasts -->
   <div class="toast-container">
     <div id="toast" class="toast"></div>
   </div>
-  
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-actions">
+        <a href="https://lacagette-coop.fr/?CagettePirateForm" target="_blank" class="footer-button submit-btn"
+          rel="noopener noreferrer">
+          <i class="fas fa-plus-circle"></i> Soumettre une annonce
+        </a>
+        <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" class="footer-button report-btn"
+          rel="noopener noreferrer">
+          <i class="fas fa-flag"></i> Signaler
+        </a>
+        <button id="aboutButton" class="footer-button about-btn">
+          <i class="fas fa-info-circle"></i> À propos
+        </button>
+        <button id="cguButton" class="footer-button cgu-btn">
+          <i class="fas fa-file-contract"></i> CGU
+        </button>
+        <div id="admin-button-container"></div>
+      </div>
+      <div class="footer-copyright">
+        &copy; 2025 La Cagette Pirate
+      </div>
+    </div>
+  </footer>
+
   <!-- Votre fichier JavaScript -->
   <script src="script.js"></script>
 </body>
+
 </html>

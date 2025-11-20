@@ -1,0 +1,68 @@
+/* Load More Button Styles */
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: var(--spacing-xl) 0;
+    padding: var(--spacing-lg) 0;
+}
+
+.load-more-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-regular);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    min-width: 200px;
+}
+
+.load-more-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+}
+
+.load-more-btn:active {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+}
+
+.load-more-btn i {
+    transition: transform var(--transition-fast);
+    font-size: 1.1em;
+}
+
+.load-more-btn:hover i {
+    transform: translateY(3px);
+    animation: bounce 0.6s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(5px);
+    }
+}
+
+/* Hide spinner and load more container by default */
+#spinner {
+    display: none;
+}
+
+#loadMoreContainer {
+    display: none;
+}
