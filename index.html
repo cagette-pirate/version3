@@ -97,10 +97,10 @@
         </button>
       </div>
       <div class="annonces-container" id="annoncesContainer"></div>
-      <div id="spinner" class="spinner" style="display:none;">
+      <div id="spinner" class="spinner">
         <div class="spinner-icon"></div>
       </div>
-      <div id="loadMoreContainer" class="load-more-container" style="display:none;">
+      <div id="loadMoreContainer" class="load-more-container">
         <button id="loadMoreBtn" class="load-more-btn">
           <i class="fas fa-chevron-down"></i> Charger plus
         </button>
@@ -301,13 +301,10 @@
           <button class="modal-like-button">
             <i class="far fa-heart"></i> J'aime
           </button>
-          <div class="modal-views">
-            <i class="far fa-eye"></i> <span class="views-count">0</span> vues
-          </div>
         </div>
         <div class="report-section">
-          <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" class="report-link"
-            title="Signaler ce contenu">
+          <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" rel="noopener"
+            class="report-link" title="Signaler ce contenu">
             <i class="fas fa-exclamation-triangle"></i> Signaler
           </a>
         </div>
@@ -326,9 +323,34 @@
         </form>
       </div>
     </div>
+  </div>
 
-    <!-- Script JS -->
-    <script src="script.js"></script>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-actions">
+        <button id="aboutButton" class="footer-button about-btn">
+          <i class="fas fa-info-circle"></i> À propos
+        </button>
+        <button id="cguButton" class="footer-button cgu-btn">
+          <i class="fas fa-file-contract"></i> CGU
+        </button>
+        <a href="https://lacagette-coop.fr/?CagettePirateFormulaire" class="footer-button submit-btn">
+          <i class="fas fa-plus-circle"></i> Publier une annonce
+        </a>
+        <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" rel="noopener"
+          class="footer-button report-btn" title="Signaler un contenu">
+          <i class="fas fa-exclamation-triangle"></i> Signaler
+        </a>
+      </div>
+      <div class="footer-copyright">
+        &copy; 2025 La Cagette Pirate - Initiative citoyenne indépendante
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script JS -->
+  <script src="script.js"></script>
 </body>
 
 </html>
