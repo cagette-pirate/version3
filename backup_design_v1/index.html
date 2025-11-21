@@ -35,55 +35,53 @@
   </header>
 
   <div class="container">
-    <!-- Barre de filtres moderne -->
-    <div class="sidebar modern-sidebar">
-      <div class="search-wrapper">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" id="searchInput" placeholder="Rechercher...">
+    <!-- Barre latérale -->
+    <div class="sidebar">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Rechercher une annonce...">
       </div>
 
       <!-- Sélecteurs de catégories -->
       <div class="filter-section">
+        <h3>Catégories</h3>
         <div class="filter-options">
-          <button class="tag-filter" data-tag="1"><i class="fas fa-calendar-day"></i> Événement</button>
-          <button class="tag-filter" data-tag="2"><i class="fas fa-bullhorn"></i> Tribune</button>
-          <button class="tag-filter" data-tag="3"><i class="fas fa-utensils"></i> Recette</button>
-          <button class="tag-filter" data-tag="4"><i class="fas fa-info-circle"></i> Info</button>
+          <button class="tag-filter" data-tag="1">Événement</button>
+          <button class="tag-filter" data-tag="2">Point de vue / Tribune</button>
+          <button class="tag-filter" data-tag="3">Recette de cuisine</button>
+          <button class="tag-filter" data-tag="4">Autre info</button>
         </div>
       </div>
 
-      <!-- Filtre par date et Tri -->
-      <div class="actions-group">
-        <div class="date-filter">
-          <div class="select-wrapper">
-            <select id="dateFilter" aria-label="Filtrer par période">
-              <option value="all" selected>Toutes périodes</option>
-              <option value="month">Ce mois</option>
-              <option value="3months">3 mois</option>
-              <option value="6months">6 mois</option>
-              <option value="year">1 an</option>
-            </select>
-            <i class="fas fa-chevron-down select-icon"></i>
-          </div>
-        </div>
+      <!-- Filtre par date -->
+      <div class="date-filter">
+        <h3>Période</h3>
+        <select id="dateFilter" aria-label="Filtrer par période">
+          <option value="all" selected>Toutes les périodes</option>
+          <option value="month">Dernier mois</option>
+          <option value="3months">3 derniers mois</option>
+          <option value="6months">6 derniers mois</option>
+          <option value="year">Dernière année</option>
+        </select>
+      </div>
 
-        <div class="separator-vertical"></div>
+      <div class="separator"></div>
 
-        <div class="sort-section">
-          <div class="sort-buttons">
-            <button id="sortByRandomBtn" class="sort-button" title="Aléatoire">
-              <i class="fas fa-random"></i>
-            </button>
-            <button id="sortByDateBtn" class="sort-button active" title="Date">
-              <i class="far fa-calendar-alt"></i>
-            </button>
-            <button id="sortByViewsBtn" class="sort-button" title="Vues">
-              <i class="far fa-eye"></i>
-            </button>
-            <button id="sortByLikesBtn" class="sort-button" title="J'aime">
-              <i class="far fa-heart"></i>
-            </button>
-          </div>
+      <!-- Boutons de tri -->
+      <div class="sort-section">
+        <h3>Trier par</h3>
+        <div class="sort-buttons">
+          <button id="sortByRandomBtn" class="sort-button">
+            <i class="fas fa-random"></i> Aléatoire
+          </button>
+          <button id="sortByDateBtn" class="sort-button active">
+            <i class="far fa-calendar-alt"></i> Date
+          </button>
+          <button id="sortByViewsBtn" class="sort-button">
+            <i class="far fa-eye"></i> Vues
+          </button>
+          <button id="sortByLikesBtn" class="sort-button">
+            <i class="far fa-heart"></i> J'aime
+          </button>
         </div>
       </div>
     </div>
@@ -289,66 +287,77 @@
       </div>
       <img class="modal-image" alt="">
       <!-- Le div ci-dessous sera ajouté dynamiquement en JavaScript quand il n'y a pas d'image -->
-      <!-- <div class="title-placeholder-modal">Titre de l'annonce</div> -->
-      <div class="modal-tags"></div>
-      <div class="modal-info">
-        <div class="modal-author"></div>
-        <div class="modal-date">Publié le <span></span></div>
-      </div>
-      <div class="modal-description"></div>
-      <div class="modal-footer">
-        <div class="modal-actions">
-          <button class="modal-like-button">
-            <i class="far fa-heart"></i> J'aime
-          </button>
-          <div class="modal-views">
-            <i class="far fa-eye"></i> <span class="views-count">0</span> vues
+      <!-- <div class="title-placeholder-modal"></div> -->
+      <div class="modal-body">
+        <div class="modal-meta">
+          <div class="modal-author"></div>
+          <div class="modal-date">
+            <i class="far fa-calendar-alt"></i>
+            <span></span>
           </div>
         </div>
-        <div class="report-section">
-          <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" class="report-link"
-            title="Signaler ce contenu">
-            <i class="fas fa-exclamation-triangle"></i> Signaler
-          </a>
-        </div>
+        <div class="modal-tags"></div>
+        <div class="modal-description"></div>
         <div class="num-annonce"></div>
-      </div>
 
-      <!-- Section Commentaires -->
-      <div class="comments-section">
-        <h3>Commentaires</h3>
-        <div id="commentsList" class="comments-list">
-          <!-- Les commentaires seront chargés ici -->
+        <div class="modal-actions">
+          <div class="modal-action-buttons">
+            <button class="modal-action-button modal-like-button">
+              <i class="far fa-heart"></i> J'aime
+            </button>
+          </div>
+          <div class="views-display">
+            <i class="fas fa-eye"></i>
+            <span class="views-count">0</span> vues
+          </div>
         </div>
-        <form class="comment-form">
-          <textarea id="commentInput" placeholder="Votre commentaire..." required></textarea>
-          <button type="submit" id="submitComment">Envoyer</button>
-        </form>
+
+        <!-- Section commentaires -->
+        <div class="comments-section">
+          <h3>Commentaires</h3>
+          <div class="comment-form">
+            <textarea id="commentInput" placeholder="Ajouter un commentaire..."></textarea>
+            <button id="submitComment">Envoyer</button>
+          </div>
+          <div class="comments-list" id="commentsList">
+            <!-- Commentaires générés dynamiquement -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
+  <!-- Container pour les toasts -->
+  <div class="toast-container">
+    <div id="toast" class="toast"></div>
+  </div>
+
   <footer class="site-footer">
     <div class="footer-content">
-      <div class="footer-links">
-        <button id="aboutButton" class="footer-btn about-btn">
+      <div class="footer-actions">
+        <a href="https://lacagette-coop.fr/?CagettePirateForm" target="_blank" class="footer-button submit-btn"
+          rel="noopener noreferrer">
+          <i class="fas fa-plus-circle"></i> Soumettre une annonce
+        </a>
+        <a href="https://lacagette-coop.fr/?CagettePirateSignalement" target="_blank" class="footer-button report-btn"
+          rel="noopener noreferrer">
+          <i class="fas fa-flag"></i> Signaler
+        </a>
+        <button id="aboutButton" class="footer-button about-btn">
           <i class="fas fa-info-circle"></i> À propos
         </button>
-        <button id="cguButton" class="footer-btn cgu-btn">
+        <button id="cguButton" class="footer-button cgu-btn">
           <i class="fas fa-file-contract"></i> CGU
         </button>
-        <a href="https://lacagette-coop.fr/?CagettePirateFormulaire" class="footer-btn submit-btn">
-          <i class="fas fa-plus-circle"></i> Publier une annonce
-        </a>
+        <div id="admin-button-container"></div>
       </div>
       <div class="footer-copyright">
-        &copy; 2025 La Cagette Pirate - Initiative citoyenne indépendante
+        &copy; 2025 La Cagette Pirate
       </div>
     </div>
   </footer>
 
-  <!-- Script JS -->
+  <!-- Votre fichier JavaScript -->
   <script src="script.js"></script>
 </body>
 

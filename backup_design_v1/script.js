@@ -18,7 +18,7 @@ const spinner = document.getElementById('spinner');
 const countAnnoncesElement = document.getElementById('countAnnonces');
 const modal = document.getElementById('modal');
 const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-const sidebar = document.querySelector('.modern-sidebar');
+const sidebar = document.querySelector('.sidebar');
 const loadMoreContainer = document.getElementById('loadMoreContainer');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 
@@ -970,7 +970,7 @@ function setupLazyLoading() {
 }
 
 // Cacher automatiquement la sidebar sur mobile lors du clic sur un filtre
-document.querySelectorAll('.modern-sidebar button').forEach(button => {
+document.querySelectorAll('.sidebar button').forEach(button => {
   button.addEventListener('click', () => {
     if (window.innerWidth < 600) {
       setTimeout(() => {
