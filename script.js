@@ -933,9 +933,9 @@ function debounce(func, wait) {
 window.addEventListener('resize', debounce(function () {
   // Adapter la pagination en fonction de la taille de l'écran
   if (window.innerWidth < 768) {
-    itemsPerPage = 4;
+    itemsPerPage = 12;
   } else {
-    itemsPerPage = 8;
+    itemsPerPage = 20;
   }
   // updatePagination(); // Supprimé car remplacé par Load More
   updateLoadMoreButton();
@@ -1066,5 +1066,5 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sortByDateBtn').classList.add('active');
 
   // Démarrer l'application
-  initApp();
+  if (window.innerWidth < 768) { itemsPerPage = 12; } else { itemsPerPage = 20; } initApp();
 });
